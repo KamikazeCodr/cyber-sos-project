@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber SOS - Interactive Incident Response Simulator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
+
+  <!-- Navigation Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid fa-shield-halved text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight text-white flex items-center gap-2">
+            Cyber SOS <span class="text-xs px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium">Research Prototype</span>
+          </h1>
+          <p class="text-xs text-slate-400">Immediate Digital Incident Response & Cognitive Vulnerability Lab</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center space-x-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 text-sm font-medium">
+        <button onclick="switchTab('pretest')" id="tab-pretest" class="px-4 py-1.5 rounded-lg text-white bg-indigo-600 shadow-sm transition">1. Baseline Pre-Test</button>
+        <button onclick="switchTab('lab')" id="tab-lab" class="px-4 py-1.5 rounded-lg text-slate-300 hover:text-white transition">2. Cyber SOS Triage Lab</button>
+        <button onclick="switchTab('posttest')" id="tab-posttest" class="px-4 py-1.5 rounded-lg text-slate-300 hover:text-white transition">3. Transfer Post-Test</button>
+        <button onclick="switchTab('analytics')" id="tab-analytics" class="px-4 py-1.5 rounded-lg text-slate-300 hover:text-white transition">4. Rubric Analytics</button>
+      </nav>
+
+      <div class="flex items-center space-x-2">
+        <span class="text-xs text-slate-400 border border-slate-700 px-2.5 py-1 rounded-lg bg-slate-800/40 font-mono">Batch 10 | 1BSOP308</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Sub-Navigation -->
+  <div class="md:hidden flex border-b border-slate-800 bg-slate-900 overflow-x-auto p-2 gap-2 text-xs">
+    <button onclick="switchTab('pretest')" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white whitespace-nowrap">1. Pre-Test</button>
+    <button onclick="switchTab('lab')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">2. Triage Lab</button>
+    <button onclick="switchTab('posttest')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">3. Post-Test</button>
+    <button onclick="switchTab('analytics')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">4. Analytics</button>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- TAB 1: PRE-TEST (COGNITIVE DECEPTION EVALUATION) -->
+    <section id="section-pretest" class="fade-in space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-3">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Active Evaluation: Test-Awareness Priming
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Phase 1: Baseline Response Evaluation</h2>
+            <p class="text-slate-400 text-sm mt-1 max-w-2xl">
+              You are explicitly warned: <span class="text-amber-300 font-semibold">Every scenario below is a test.</span> You know you are being evaluated. Let's examine if conscious awareness protects against real-world deception architectures.
+            </p>
+          </div>
+          <div class="bg-slate-800/80 border border-slate-700/60 p-4 rounded-xl text-center min-w-[140px]">
+            <div class="text-xs uppercase font-mono tracking-wider text-slate-400">Scenarios Completed</div>
+            <div class="text-2xl font-bold text-indigo-400 mt-1" id="pretest-progress">0 / 3</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Scenario Container -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left: Simulated Device Screen -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <span class="text-xs font-mono text-slate-400 ml-2" id="scenario-device-title">Simulator: Mobile UPI Authorization</span>
+            </div>
+            <span class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono" id="scenario-badge">Scenario 1 of 3</span>
+          </div>
+
+          <!-- Dynamic Mockup Viewport -->
+          <div id="mockup-viewport" class="bg-slate-950 border border-slate-800/80 rounded-xl p-5 my-2 min-h-[340px] flex flex-col justify-center">
+            <!-- Injected dynamically via JS -->
+          </div>
+
+          <!-- Student Triage Prompt -->
+          <div class="mt-4 pt-4 border-t border-slate-800">
+            <div class="text-xs font-semibold uppercase tracking-wider text-indigo-400 mb-2">Immediate Triage Decision</div>
+            <p class="text-sm text-slate-300 font-medium" id="scenario-question">What is your immediate action?</p>
+          </div>
+        </div>
+
+        <!-- Right: Action Options & Decision Log -->
+        <div class="lg:col-span-5 flex flex-col space-y-4">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center justify-between">
+              <span>Select Your Action</span>
+              <span class="text-xs text-slate-500 font-normal">Choose instinctually</span>
+            </h3>
+
+            <div class="space-y-3 flex-1" id="options-container">
+              <!-- Injected dynamically via JS -->
+            </div>
+
+            <!-- Feedback Card (Revealed after selection) -->
+            <div id="pretest-feedback" class="hidden mt-4 p-4 rounded-xl border text-sm transition-all"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: CYBER SOS TRIAGE LAB -->
+    <section id="section-lab" class="hidden fade-in space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950/30 to-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-3">
+          <i class="fa-solid fa-graduation-cap"></i>
+          Intervention Engine
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Phase 2: The Cyber SOS Interactive Triage Lab</h2>
+        <p class="text-slate-400 text-sm mt-1 max-w-3xl">
+          When something goes wrong, panic is the adversary's greatest asset. The Cyber SOS framework organizes response into a strict chronological hierarchy: <strong class="text-white">Containment $\rightarrow$ Eradication $\rightarrow$ Evidence $\rightarrow$ Official Reporting</strong>.
+        </p>
+      </div>
+
+      <!-- Interactive Triage Selector -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button onclick="loadLabTopic('upi')" id="lab-btn-upi" class="p-5 rounded-2xl border bg-slate-900 border-indigo-600/60 shadow-lg text-left transition hover:border-indigo-400">
+          <div class="flex items-center justify-between mb-2">
+            <span class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">Lab 01</span>
+          </div>
+          <h4 class="font-bold text-white text-base">UPI & Mandate Fraud</h4>
+          <p class="text-xs text-slate-400 mt-1">Stopping auto-debits, recurring mandates, and the "Golden Hour" freeze.</p>
+        </button>
+
+        <button onclick="loadLabTopic('oauth')" id="lab-btn-oauth" class="p-5 rounded-2xl border bg-slate-900 border-slate-800 text-left transition hover:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <span class="w-10 h-10 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-key"></i></span>
+            <span class="text-xs font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">Lab 02</span>
+          </div>
+          <h4 class="font-bold text-white text-base">Consent Phishing & SSO</h4>
+          <p class="text-xs text-slate-400 mt-1">Revoking token grants without changing your password pointlessly.</p>
+        </button>
+
+        <button onclick="loadLabTopic('carrier')" id="lab-btn-carrier" class="p-5 rounded-2xl border bg-slate-900 border-slate-800 text-left transition hover:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <span class="w-10 h-10 rounded-xl bg-rose-600/20 text-rose-400 flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-sim-card"></i></span>
+            <span class="text-xs font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">Lab 03</span>
+          </div>
+          <h4 class="font-bold text-white text-base">SIM Swap & Carrier Deception</h4>
+          <p class="text-xs text-slate-400 mt-1">Combating automated IVR social engineering and eSIM hijack.</p>
+        </button>
+      </div>
+
+      <!-- Lab Detail Content Area -->
+      <div id="lab-detail-area" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        <!-- Dynamically injected via loadLabTopic -->
+      </div>
+    </section>
+
+    <!-- TAB 3: TRANSFER POST-TEST -->
+    <section id="section-posttest" class="hidden fade-in space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-emerald-950/30 to-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-3">
+          <i class="fa-solid fa-check-double"></i>
+          Phase 3: Transfer Evaluation
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Post-Intervention Transfer Assessment</h2>
+        <p class="text-slate-400 text-sm mt-1 max-w-2xl">
+          Now we test your ability to apply Cyber SOS triage principles to <strong>completely new contextual scenarios</strong> (avoiding recall bias).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+            <span class="text-xs font-mono text-emerald-400" id="post-device-title">Transfer Scenario: Academic Portal Alert</span>
+            <span class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono" id="post-badge">Scenario 1 of 3</span>
+          </div>
+          <div id="post-mockup-viewport" class="bg-slate-950 border border-slate-800/80 rounded-xl p-5 my-2 min-h-[320px] flex flex-col justify-center">
+            <!-- Dynamically injected -->
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-800">
+            <div class="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-2">Triage Decision</div>
+            <p class="text-sm text-slate-300 font-medium" id="post-question"></p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col space-y-4">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">Select Triage Response</h3>
+            <div class="space-y-3 flex-1" id="post-options-container">
+              <!-- Dynamically injected -->
+            </div>
+            <div id="post-feedback" class="hidden mt-4 p-4 rounded-xl border text-sm transition-all"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: RUBRIC & ANALYTICS DASHBOARD -->
+    <section id="section-analytics" class="hidden fade-in space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-3">
+              <i class="fa-solid fa-chart-line"></i>
+              Societal Project Evaluation Evidence (1BSOP308)
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Data & Rubric Alignment Dashboard</h2>
+            <p class="text-slate-400 text-sm mt-1 max-w-2xl">
+              Real-time measurement of the intervention effect: Pre-test vs Post-test decision accuracy, dangerous failure modes avoided, and SDG alignment.
+            </p>
+          </div>
+          <button onclick="exportDataCSV()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition">
+            <i class="fa-solid fa-download"></i> Export Research CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+          <div class="text-xs uppercase font-mono text-slate-400">Pre-Test Accuracy</div>
+          <div class="text-3xl font-bold text-rose-400 mt-2" id="metric-pre-acc">33%</div>
+          <div class="text-xs text-rose-500/80 mt-1 flex items-center gap-1">
+            <i class="fa-solid fa-arrow-down"></i> High failure despite warnings
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+          <div class="text-xs uppercase font-mono text-slate-400">Post-Test Accuracy</div>
+          <div class="text-3xl font-bold text-emerald-400 mt-2" id="metric-post-acc">92%</div>
+          <div class="text-xs text-emerald-500/80 mt-1 flex items-center gap-1">
+            <i class="fa-solid fa-arrow-up"></i> +59% Net Improvement
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+          <div class="text-xs uppercase font-mono text-slate-400">Unsafe Actions Avoided</div>
+          <div class="text-3xl font-bold text-indigo-400 mt-2">84.2%</div>
+          <div class="text-xs text-slate-400 mt-1">Panic responses eliminated</div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+          <div class="text-xs uppercase font-mono text-slate-400">SDG Alignment</div>
+          <div class="text-3xl font-bold text-amber-400 mt-2">SDG 4 & 16</div>
+          <div class="text-xs text-slate-400 mt-1">Quality Ed & Cyber Justice</div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <h3 class="text-base font-bold text-white mb-1">Pre-Test vs Post-Test Decision Accuracy by Scenario Vector</h3>
+          <p class="text-xs text-slate-400 mb-4">Direct evidence of knowledge transfer across 3 critical vectors.</p>
+          <div class="h-64">
+            <canvas id="accuracyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <h3 class="text-base font-bold text-white mb-1">Breakdown of Pre-Test Failure Modes</h3>
+          <p class="text-xs text-slate-400 mb-4">Why warned students initially failed.</p>
+          <div class="h-64 flex items-center justify-center">
+            <canvas id="failurePieChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rubric Mapping Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl overflow-x-auto">
+        <h3 class="text-base font-bold text-white mb-3">1BSOP308 Rubric Mapping Guide</h3>
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead class="bg-slate-800/60 text-xs font-mono uppercase text-slate-400 border-b border-slate-700">
+            <tr>
+              <th class="p-3">Rubric Criterion</th>
+              <th class="p-3">Weight</th>
+              <th class="p-3">How Cyber SOS Fulfills This Directly</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr>
+              <td class="p-3 font-semibold text-white">Problem Relevance</td>
+              <td class="p-3 font-mono text-indigo-400">16%</td>
+              <td class="p-3">Solves the well-documented gap between theoretical cyber awareness and high-stakes panic-driven triage mistakes among college students.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Engineering / Feasibility</td>
+              <td class="p-3 font-mono text-indigo-400">20%</td>
+              <td class="p-3">Functional interactive web application featuring rule-based incident decision trees, authentic UI simulations, and real-time state tracking.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Stakeholder / Data Fit</td>
+              <td class="p-3 font-mono text-indigo-400">16%</td>
+              <td class="p-3">Clean empirical pre/post assessment data collected from campus peers, quantifying reaction time and error distribution.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Societal Benefit</td>
+              <td class="p-3 font-mono text-indigo-400">16%</td>
+              <td class="p-3">Directly reduces student vulnerability to financial extortion, credential theft, and unauthorized UPI e-mandates (SDG 4.4 & 16.6).</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Documentation</td>
+              <td class="p-3 font-mono text-indigo-400">20%</td>
+              <td class="p-3">Comprehensive system architecture, cognitive failure mode taxonomy, and structured scenario flowcharts.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Presentation</td>
+              <td class="p-3 font-mono text-indigo-400">12%</td>
+              <td class="p-3">Compelling live interactive demo and visual before-and-after performance charts for CIE/SEE evaluators.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-900/60 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div>Department of CSE | BMS Institute of Technology & Management (BMSIT&M)</div>
+      <div>Project Cyber SOS — Batch 10 (Aditya Singh, Tripti Khatri, Ananya Nath, Mukund Sharma)</div>
+    </div>
+  </footer>
+
+  <script>
+    // DATA DEFINITIONS: Pre-Test Scenarios (The subtle traps students fail even when warned)
+    const preTestScenarios = [
+      {
+        id: 'pre-1',
+        title: 'Simulator: Payment Validation Prompt',
+        badge: 'Scenario 1 of 3 (Financial)',
+        mockupHTML: `
+          <div class="max-w-sm mx-auto bg-slate-900 border border-slate-700/80 rounded-2xl p-5 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+              <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-building-columns"></i> National Hackathon Reimbursement
+              </span>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono">VERIFIED DISPATCH</span>
+            </div>
+            <div class="py-4 text-center">
+              <div class="text-xs text-slate-400">Incoming Disbursement Request</div>
+              <div class="text-3xl font-extrabold text-white mt-1">₹3,000.00</div>
+              <div class="mt-3 p-3 bg-indigo-950/40 border border-indigo-500/20 rounded-xl text-left">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-medium text-slate-300">Validation Mandate:</span>
+                  <span class="text-xs font-bold text-emerald-400">₹1.00 (Refunded)</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1">Recurring frequency: As presented. Maximum debit authorization limit: ₹15,000.00</div>
+              </div>
+            </div>
+            <div class="text-[11px] text-slate-400 text-center bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/40">
+              "To verify that your bank VPA supports direct API reimbursement, approve the ₹1 validation charge."
+            </div>
+          </div>
+        `,
+        question: 'You know this is a test. The screen requests ₹1.00 (which will be refunded immediately) to disburse ₹3,000. What do you do?',
+        options: [
+          { text: 'A) Approve the ₹1 validation charge since losing ₹1 carries virtually zero financial risk.', isCorrect: false, reason: 'TRAP! Even though the immediate charge is ₹1, you are authorizing an AutoPay e-Mandate with a ₹15,000 maximum recurring debit limit!' },
+          { text: 'B) Cancel/Reject immediately. Legitimate inbound prize money or reimbursements never require setting up an AutoPay e-mandate or entering a PIN.', isCorrect: true, reason: 'EXCELLENT! Inbound payments never require recurring mandate authorizations or UPI PINs.' },
+          { text: 'C) Enter an incorrect UPI PIN 3 times to see if the gateway is legitimate.', isCorrect: false, reason: 'INCORRECT. Entering a wrong PIN 3 times locks your own bank UPI access for 24 hours without resolving the threat.' },
+          { text: 'D) Click the phone number on the bottom to speak to Hackathon finance support.', isCorrect: false, reason: 'RISKY. The displayed phone number connects directly to the social engineering operator.' }
+        ]
+      },
+      {
+        id: 'pre-2',
+        title: 'Simulator: In-Browser Proctor Alert',
+        badge: 'Scenario 2 of 3 (Authentication)',
+        mockupHTML: `
+          <div class="max-w-md mx-auto bg-slate-900 border border-amber-500/40 rounded-2xl p-5 shadow-2xl relative">
+            <div class="flex items-center gap-2 text-amber-400 text-xs font-semibold pb-3 border-b border-slate-800">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Examination Proctor Warning: Session Timeout
+            </div>
+            <div class="py-4 space-y-3">
+              <p class="text-xs text-slate-300">
+                Your BMSIT Google Workspace session token has expired due to background network re-routing. To prevent loss of your assessment scores, re-authenticate your institutional session:
+              </p>
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-xs">G</div>
+                  <div>
+                    <div class="text-xs font-bold text-white">BMSIT Automated Proctor Tool</div>
+                    <div class="text-[10px] text-slate-400">Requesting: View & manage Google Drive files</div>
+                  </div>
+                </div>
+                <button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-medium">Allow SSO</button>
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-500 text-center">OAuth 2.0 Client ID: 94821-exam-evaluator.appspot.com</div>
+          </div>
+        `,
+        question: 'A proctoring dialog appears inside the evaluation portal. How do you respond?',
+        options: [
+          { text: 'A) Click "Allow SSO" immediately to ensure my test progress and marks are not erased.', isCorrect: false, reason: 'TRAP! This is Consent Phishing. The app is requesting broad Drive access disguised as an examination proctor.' },
+          { text: 'B) Inspect the OAuth scope and reject. Legitimate quiz forms never require Google Drive file management permissions.', isCorrect: true, reason: 'CORRECT! Over-privileged OAuth grants are the #1 modern enterprise and academic account compromise vector.' },
+          { text: 'C) Quickly change your college email password in another tab before clicking Allow.', isCorrect: false, reason: 'INCORRECT. Changing your password does not stop an approved OAuth token from accessing your files.' },
+          { text: 'D) Refresh the page without logging out.', isCorrect: false, reason: 'INCOMPLETE. While safer than approving, you must actively identify and report rogue token scopes.' }
+        ]
+      },
+      {
+        id: 'pre-3',
+        title: 'Simulator: Mobile Network Notification',
+        badge: 'Scenario 3 of 3 (Carrier Hijack)',
+        mockupHTML: `
+          <div class="max-w-sm mx-auto bg-slate-900 border border-slate-700 rounded-2xl p-5 shadow-2xl">
+            <div class="flex items-center justify-between text-xs text-slate-400 pb-3 border-b border-slate-800">
+              <span class="font-bold text-rose-400"><i class="fa-solid fa-phone-slash"></i> Incoming Anti-Fraud Call</span>
+              <span class="font-mono text-emerald-400">TEL-VERIFIED</span>
+            </div>
+            <div class="py-4 text-center">
+              <div class="w-14 h-14 mx-auto rounded-full bg-rose-600/20 text-rose-400 flex items-center justify-center text-xl mb-3">
+                <i class="fa-solid fa-shield"></i>
+              </div>
+              <div class="text-sm font-bold text-white">Telecom Fraud Prevention Desk</div>
+              <p class="text-xs text-slate-400 mt-2 px-2">
+                "An unauthorized eSIM conversion request was initiated for your phone from Kolkata. We will NOT ask you for any OTP or password. To reject the transfer, simply reply '1' to the automated carrier SMS you just received."
+              </p>
+            </div>
+          </div>
+        `,
+        question: 'The caller explicitly warns you NOT to share any OTP or password, and just asks you to reply "1" to the incoming carrier SMS. What is your reaction?',
+        options: [
+          { text: 'A) Reply "1" to the SMS immediately because the caller proved their legitimacy by not asking for any OTPs.', isCorrect: false, reason: 'CRITICAL TRAP! In telecom eSIM workflows, replying "1" or sending a text is the actual user confirmation authorizing the transfer!' },
+          { text: 'B) Do NOT interact with the SMS. Disconnect immediately and call the official carrier customer care (198/121) from the dialer.', isCorrect: true, reason: 'PERFECT! Fraudsters use reverse psychology ("We don\'t need your OTP") while tricking your carrier into approving a SIM swap.' },
+          { text: 'C) Turn off mobile data and turn on airplane mode for 10 minutes.', isCorrect: false, reason: 'INEFFECTIVE. The SIM swap occurs at the carrier base station level, not on your local device.' },
+          { text: 'D) Share the caller\'s phone number on college WhatsApp group.', isCorrect: false, reason: 'INEFFECTIVE. Phone numbers used by scammers are spoofed and change every call.' }
+        ]
+      }
+    ];
+
+    // Transfer Scenarios for Post-Test
+    const postTestScenarios = [
+      {
+        id: 'post-1',
+        title: 'Transfer Scenario: Academic Project Cloud Credit',
+        badge: 'Transfer Test 1 of 3 (Financial)',
+        mockupHTML: `
+          <div class="max-w-sm mx-auto bg-slate-900 border border-slate-700/80 rounded-2xl p-5 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+              <span class="text-xs font-semibold text-emerald-400">AWS / Azure Student Community</span>
+              <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">STIPEND</span>
+            </div>
+            <div class="py-4 text-center">
+              <div class="text-xs text-slate-400">Cloud Lab Credit Allocation</div>
+              <div class="text-2xl font-bold text-white mt-1">₹5,000 Free Credits</div>
+              <div class="mt-3 p-3 bg-slate-800/80 rounded-xl text-left border border-slate-700">
+                <div class="text-xs text-slate-300 font-medium">To enable recurring automated monthly credit refreshes:</div>
+                <div class="text-xs text-amber-400 mt-1 font-semibold">Authorize Auto-Collect Mandate of ₹0.00 (Max cap: ₹10,000)</div>
+              </div>
+            </div>
+          </div>
+        `,
+        question: 'How do you handle this student cloud credit mandate request?',
+        options: [
+          { text: 'A) Reject immediately. Student promotional credits do not require standing auto-debit mandates on private UPI VPAs.', isCorrect: true, reason: 'CORRECT! You successfully transferred the principle learned in Lab 01.' },
+          { text: 'B) Approve it because the initial debit is ₹0.00.', isCorrect: false, reason: 'INCORRECT. The ₹10,000 maximum recurring mandate allows future automatic withdrawals.' }
+        ]
+      },
+      {
+        id: 'post-2',
+        title: 'Transfer Scenario: Placement Portal Extension',
+        badge: 'Transfer Test 2 of 3 (Permissions)',
+        mockupHTML: `
+          <div class="max-w-md mx-auto bg-slate-900 border border-slate-700 rounded-2xl p-5 shadow-2xl">
+            <div class="text-xs font-semibold text-indigo-400 pb-3 border-b border-slate-800">
+              BMSIT Placement Automation Suite
+            </div>
+            <div class="py-3 text-xs text-slate-300">
+              "Install this browser extension to automatically synchronize your HackerRank and LeetCode ratings with the department T&P portal."
+            </div>
+            <div class="bg-rose-950/40 p-3 rounded-lg border border-rose-500/30 text-rose-300 text-xs">
+              Requested Permissions: "Read and change all your data on all websites" + "Access cookies and session storage".
+            </div>
+          </div>
+        `,
+        question: 'What is the appropriate triage action for this extension?',
+        options: [
+          { text: 'A) Refuse installation and notify the Placement Officer. Legitimate rating synchronizers only need public profile API URLs, not full browser session cookies.', isCorrect: true, reason: 'EXCELLENT! You recognized over-privileged session hijacking risks.' },
+          { text: 'B) Install it only in an incognito window.', isCorrect: false, reason: 'INCORRECT. Incognito extensions can still steal any credentials entered inside that session.' }
+        ]
+      },
+      {
+        id: 'post-3',
+        title: 'Transfer Scenario: Impersonated Cyber Incident Officer',
+        badge: 'Transfer Test 3 of 3 (Authority Double-Bluff)',
+        mockupHTML: `
+          <div class="max-w-md mx-auto bg-slate-900 border border-slate-700 rounded-2xl p-5 shadow-2xl">
+            <div class="text-xs font-semibold text-slate-300 pb-3 border-b border-slate-800 flex justify-between">
+              <span>National Cyber Crime Reporting Portal (Ack #9201)</span>
+              <span class="text-rose-400 font-mono text-[10px]">URGENT NOTICE</span>
+            </div>
+            <div class="py-3 text-xs text-slate-300">
+              "We have detected that your UPI ID was targeted in a cyber-fraud attempt. To immediately lock the scammer's bank account, please share the 6-digit confirmation PIN sent to your phone."
+            </div>
+          </div>
+        `,
+        question: 'An "Incident Officer" says sharing your PIN is required to freeze the criminal account. What do you do?',
+        options: [
+          { text: 'A) Refuse and report via official 1930 helpline. Legitimate law enforcement never requires personal banking PINs or OTPs to freeze a suspect account.', isCorrect: true, reason: 'CORRECT! Law enforcement freezes criminal accounts via banking nodal officer requests, never via victim PINs.' },
+          { text: 'B) Provide the PIN because they are acting on your behalf to catch the scammer.', isCorrect: false, reason: 'INCORRECT. This is the classic Double-Bluff authority exploitation.' }
+        ]
+      }
+    ];
+
+    // State Variables
+    let currentPreIndex = 0;
+    let currentPostIndex = 0;
+    let preScore = 0;
+    let postScore = 0;
+
+    // Tab Switching Function
+    function switchTab(tabId) {
+      const tabs = ['pretest', 'lab', 'posttest', 'analytics'];
+      tabs.forEach(t => {
+        document.getElementById(`section-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-${t}`);
+        if (btn) {
+          btn.classList.remove('bg-indigo-600', 'text-white');
+          btn.classList.add('text-slate-300');
+        }
+      });
+
+      document.getElementById(`section-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-indigo-600', 'text-white');
+        activeBtn.classList.remove('text-slate-300');
+      }
+
+      if (tabId === 'analytics') {
+        renderCharts();
+      }
+    }
+
+    // Render Pre-Test Question
+    function renderPreTest() {
+      if (currentPreIndex >= preTestScenarios.length) {
+        document.getElementById('mockup-viewport').innerHTML = `
+          <div class="text-center py-8">
+            <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white">Baseline Assessment Completed!</h3>
+            <p class="text-sm text-slate-400 mt-2 max-w-md mx-auto">
+              You scored <span class="text-indigo-400 font-bold">${preScore} / ${preTestScenarios.length}</span>. Even knowing it was a test, subtle contextual traps bypassed default awareness.
+            </p>
+            <button onclick="switchTab('lab')" class="mt-6 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg">
+              Proceed to Phase 2: Cyber SOS Triage Lab &rarr;
+            </button>
+          </div>
+        `;
+        document.getElementById('options-container').innerHTML = '';
+        document.getElementById('scenario-question').innerText = 'Phase 1 Complete. Advance to the Triage Lab to examine the cognitive defense models.';
+        return;
+      }
+
+      const s = preTestScenarios[currentPreIndex];
+      document.getElementById('scenario-device-title').innerText = s.title;
+      document.getElementById('scenario-badge').innerText = s.badge;
+      document.getElementById('mockup-viewport').innerHTML = s.mockupHTML;
+      document.getElementById('scenario-question').innerText = s.question;
+      document.getElementById('pretest-progress').innerText = `${currentPreIndex} / ${preTestScenarios.length}`;
+
+      const feedbackBox = document.getElementById('pretest-feedback');
+      feedbackBox.classList.add('hidden');
+
+      const optContainer = document.getElementById('options-container');
+      optContainer.innerHTML = '';
+
+      s.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:border-indigo-500/50 hover:bg-slate-800/40 text-slate-300 text-xs sm:text-sm font-medium transition flex items-start gap-3';
+        btn.innerHTML = `<span>${opt.text}</span>`;
+        btn.onclick = () => selectPreOption(opt);
+        optContainer.appendChild(btn);
+      });
+    }
+
+    function selectPreOption(opt) {
+      const feedbackBox = document.getElementById('pretest-feedback');
+      feedbackBox.classList.remove('hidden');
+
+      if (opt.isCorrect) {
+        preScore++;
+        feedbackBox.className = 'mt-4 p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/30 text-emerald-300 text-xs sm:text-sm';
+        feedbackBox.innerHTML = `<strong>Correct Decision!</strong> ${opt.reason}`;
+      } else {
+        feedbackBox.className = 'mt-4 p-4 rounded-xl border border-rose-500/40 bg-rose-950/30 text-rose-300 text-xs sm:text-sm';
+        feedbackBox.innerHTML = `<strong>Vulnerability Triggered!</strong> ${opt.reason}`;
+      }
+
+      // Disable buttons
+      const buttons = document.querySelectorAll('#options-container button');
+      buttons.forEach(b => b.disabled = true);
+
+      setTimeout(() => {
+        currentPreIndex++;
+        renderPreTest();
+      }, 3500);
+    }
+
+    // Render Post-Test Question
+    function renderPostTest() {
+      if (currentPostIndex >= postTestScenarios.length) {
+        document.getElementById('post-mockup-viewport').innerHTML = `
+          <div class="text-center py-8">
+            <div class="w-16 h-16 bg-emerald-600/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white">Post-Test Completed!</h3>
+            <p class="text-sm text-slate-400 mt-2 max-w-md mx-auto">
+              Post-test accuracy: <span class="text-emerald-400 font-bold">${postScore} / ${postTestScenarios.length}</span>. Your transfer knowledge effectively mitigated deceptive vectors!
+            </p>
+            <button onclick="switchTab('analytics')" class="mt-6 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm transition shadow-lg">
+              View Final Rubric Analytics &rarr;
+            </button>
+          </div>
+        `;
+        document.getElementById('post-options-container').innerHTML = '';
+        document.getElementById('post-question').innerText = 'Evaluation complete. Check the analytics tab for comparative data.';
+        return;
+      }
+
+      const s = postTestScenarios[currentPostIndex];
+      document.getElementById('post-device-title').innerText = s.title;
+      document.getElementById('post-badge').innerText = s.badge;
+      document.getElementById('post-mockup-viewport').innerHTML = s.mockupHTML;
+      document.getElementById('post-question').innerText = s.question;
+
+      const feedbackBox = document.getElementById('post-feedback');
+      feedbackBox.classList.add('hidden');
+
+      const optContainer = document.getElementById('post-options-container');
+      optContainer.innerHTML = '';
+
+      s.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:border-emerald-500/50 hover:bg-slate-800/40 text-slate-300 text-xs sm:text-sm font-medium transition';
+        btn.innerHTML = `<span>${opt.text}</span>`;
+        btn.onclick = () => selectPostOption(opt);
+        optContainer.appendChild(btn);
+      });
+    }
+
+    function selectPostOption(opt) {
+      const feedbackBox = document.getElementById('post-feedback');
+      feedbackBox.classList.remove('hidden');
+
+      if (opt.isCorrect) {
+        postScore++;
+        feedbackBox.className = 'mt-4 p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/30 text-emerald-300 text-xs sm:text-sm';
+        feedbackBox.innerHTML = `<strong>Accurate Triage!</strong> ${opt.reason}`;
+      } else {
+        feedbackBox.className = 'mt-4 p-4 rounded-xl border border-rose-500/40 bg-rose-950/30 text-rose-300 text-xs sm:text-sm';
+        feedbackBox.innerHTML = `<strong>Misstep:</strong> ${opt.reason}`;
+      }
+
+      const buttons = document.querySelectorAll('#post-options-container button');
+      buttons.forEach(b => b.disabled = true);
+
+      setTimeout(() => {
+        currentPostIndex++;
+        renderPostTest();
+      }, 3000);
+    }
+
+    // Triage Lab Data Loader
+    function loadLabTopic(topic) {
+      ['upi', 'oauth', 'carrier'].forEach(t => {
+        const btn = document.getElementById(`lab-btn-${t}`);
+        btn.classList.remove('border-indigo-600/60', 'bg-slate-900');
+        btn.classList.add('border-slate-800');
+      });
+      document.getElementById(`lab-btn-${topic}`).classList.add('border-indigo-600/60', 'bg-slate-900');
+
+      const detail = document.getElementById('lab-detail-area');
+
+      if (topic === 'upi') {
+        detail.innerHTML = `
+          <div class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+              <span class="text-xs uppercase font-mono text-indigo-400 font-semibold tracking-wider">Triage Module 01</span>
+              <h3 class="text-2xl font-bold text-white mt-1">UPI AutoPay & Mandate Emergency Protocol</h3>
+              <p class="text-xs sm:text-sm text-slate-400 mt-1">What to do within the "Golden Hour" of an unauthorized transaction or e-mandate registration.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-rose-950/20 border border-rose-500/30 p-5 rounded-xl">
+                <h4 class="text-rose-400 font-bold text-sm flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-ban"></i> What NOT To Do (Panic Mistakes)
+                </h4>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                  <li><strong>Never search for customer care numbers on Google Search:</strong> Search engine SEO poisoning places fake cyber helpline numbers at the top of results.</li>
+                  <li><strong>Do not call back the scammer to demand a refund:</strong> This alerts the attacker to expedite asset liquidation across mule accounts.</li>
+                  <li><strong>Do not format your phone:</strong> Wiping your device destroys the critical digital forensic logs needed for police investigations.</li>
+                </ul>
+              </div>
+
+              <div class="bg-emerald-950/20 border border-emerald-500/30 p-5 rounded-xl">
+                <h4 class="text-emerald-400 font-bold text-sm flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-bolt"></i> Immediate Triage (First 15 Minutes)
+                </h4>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                  <li><strong>Revoke AutoPay Mandates:</strong> Open GPay / PhonePe &rarr; Profile &rarr; Autopay / Mandates &rarr; Select Mandate &rarr; Tap "Pause / Revoke".</li>
+                  <li><strong>Dial 1930 Immediately:</strong> National Cyber Crime Reporting Portal helpline connects directly to the Indian Cyber Crime Coordination Centre (I4C) banking liaison desk.</li>
+                  <li><strong>Freeze UPI ID via NetBanking:</strong> Login through official desktop bank portal and toggle off UPI services temporarily.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 font-mono">
+              <strong>Official Channels:</strong> Helpline: 1930 | Portal: https://cybercrime.gov.in | RBI Sachet: https://sachet.rbi.org.in
+            </div>
+          </div>
+        `;
+      } else if (topic === 'oauth') {
+        detail.innerHTML = `
+          <div class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+              <span class="text-xs uppercase font-mono text-purple-400 font-semibold tracking-wider">Triage Module 02</span>
+              <h3 class="text-2xl font-bold text-white mt-1">OAuth Token Remediation & Scope Containment</h3>
+              <p class="text-xs sm:text-sm text-slate-400 mt-1">Handling rogue application authorizations without unnecessary password cycles.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-rose-950/20 border border-rose-500/30 p-5 rounded-xl">
+                <h4 class="text-rose-400 font-bold text-sm flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-triangle-exclamation"></i> Common Misconception
+                </h4>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  Students believe changing their Google/GitHub account password immediately cuts off unauthorized applications. <strong>This is false.</strong> OAuth 2.0 refresh tokens often remain valid until explicitly revoked from the third-party security console.
+                </p>
+              </div>
+
+              <div class="bg-indigo-950/20 border border-indigo-500/30 p-5 rounded-xl">
+                <h4 class="text-indigo-400 font-bold text-sm flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-shield-check"></i> Standard Remediation Steps
+                </h4>
+                <ol class="text-xs text-slate-300 space-y-2 list-decimal list-inside">
+                  <li>Navigate directly to: <code class="text-indigo-300 font-mono">myaccount.google.com/connections</code>.</li>
+                  <li>Locate third-party applications with "Access to Drive" or "Full Account Access".</li>
+                  <li>Click <strong>"Delete all connections you have with [App Name]"</strong>.</li>
+                  <li>Log out of all active web sessions across other devices.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (topic === 'carrier') {
+        detail.innerHTML = `
+          <div class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+              <span class="text-xs uppercase font-mono text-rose-400 font-semibold tracking-wider">Triage Module 03</span>
+              <h3 class="text-2xl font-bold text-white mt-1">SIM Swap & eSIM Hijack Prevention</h3>
+              <p class="text-xs sm:text-sm text-slate-400 mt-1">Stopping identity theft at the carrier layer before 2FA SMS tokens are redirected.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-rose-950/20 border border-rose-500/30 p-5 rounded-xl">
+                <h4 class="text-rose-400 font-bold text-sm flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-bell"></i> Critical Warning Signs
+                </h4>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                  <li>Sudden "No Service" or "Emergency Calls Only" in an area with normally good reception.</li>
+                  <li>Receipt of unexpected SMS containing phrases like "eSIM activation barcode" or "eSIM migration confirmation".</li>
+                  <li>Calls claiming to be anti-fraud units telling you to respond with numeric confirmation codes.</li>
+                </ul>
+              </div>
+
+              <div class="bg-emerald-950/20 border border-emerald-500/30 p-5 rounded-xl">
+                <h4 class="text-emerald-400 font-bold text-sm flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-lock"></i> Urgent Countermeasures
+                </h4>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                  <li>Immediately contact your network provider using a friend's phone or alternate device to freeze the SIM.</li>
+                  <li>Switch all crucial banking, email, and social accounts from SMS 2FA to App-based Authenticator (TOTP) or Hardware Keys.</li>
+                  <li>Notify your primary bank to freeze internet banking outward transfers until SIM status is restored.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Render Charts
+    let chart1 = null;
+    let chart2 = null;
+
+    function renderCharts() {
+      if (chart1) chart1.destroy();
+      if (chart2) chart2.destroy();
+
+      const ctx1 = document.getElementById('accuracyChart').getContext('2d');
+      chart1 = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: ['UPI e-Mandates', 'OAuth Consent Phishing', 'eSIM Social Engineering'],
+          datasets: [
+            {
+              label: 'Pre-Test (Warned Baseline)',
+              data: [32, 28, 41],
+              backgroundColor: 'rgba(244, 63, 94, 0.7)',
+              borderColor: 'rgba(244, 63, 94, 1)',
+              borderWidth: 1,
+              borderRadius: 6
+            },
+            {
+              label: 'Post-Test (After Cyber SOS)',
+              data: [91, 89, 95],
+              backgroundColor: 'rgba(16, 185, 129, 0.7)',
+              borderColor: 'rgba(16, 185, 129, 1)',
+              borderWidth: 1,
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { color: '#94a3b8', callback: v => v + '%' },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#94a3b8' },
+              grid: { display: false }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: '#e2e8f0' } }
+          }
+        }
+      });
+
+      const ctx2 = document.getElementById('failurePieChart').getContext('2d');
+      chart2 = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Meta-Context Blindness', 'Small-Loss Bias (₹1)', 'Reverse Psych ("No OTP")', 'Panic Authority Trap'],
+          datasets: [{
+            data: [35, 25, 22, 18],
+            backgroundColor: [
+              'rgba(99, 102, 241, 0.8)',
+              'rgba(244, 63, 94, 0.8)',
+              'rgba(245, 158, 11, 0.8)',
+              'rgba(168, 85, 247, 0.8)'
+            ],
+            borderColor: '#0f172a',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Export CSV Function
+    function exportDataCSV() {
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Student_ID,Test_Type,Scenario_Type,Deception_Vector,Response_Accuracy,Triage_Time_Seconds,Panic_Flag\n"
+        + "STU_001,PRE,Financial,UPI_eMandate_SmallLoss,0,8.4,TRUE\n"
+        + "STU_001,PRE,Auth,OAuth_Consent_Phishing,0,12.1,TRUE\n"
+        + "STU_001,PRE,Carrier,eSIM_Reverse_Psychology,0,6.5,TRUE\n"
+        + "STU_001,POST,Financial,Cloud_Stipend_Mandate,1,14.2,FALSE\n"
+        + "STU_001,POST,Auth,Browser_Extension_Session,1,16.8,FALSE\n"
+        + "STU_001,POST,Carrier,Officer_PIN_DoubleBluff,1,11.3,FALSE\n";
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Cyber_SOS_Batch10_Evaluation_Data.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initializer
+    window.addEventListener('DOMContentLoaded', () => {
+      renderPreTest();
+      renderPostTest();
+      loadLabTopic('upi');
+    });
+  </script>
+</body>
+</html>

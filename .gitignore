@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Local test outputs
+scratch/

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electric Field Particle Tracer Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #05070c;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      user-select: none;
+    }
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .hud {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 10;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 13px;
+      line-height: 1.6;
+      pointer-events: none;
+      background: rgba(10, 14, 22, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 18px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    .hud h1 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hud .indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    .hud p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.45); }
+    .hud .key {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      font-family: monospace;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud">
+    <h1><span class="indicator"></span> Electric Field Particle Canvas</h1>
+    <p>Move your mouse around to draw particles into an electric attractor field.</p>
+    <p style="margin-top: 6px;">
+      <span class="key">Far</span> Gentle ambient drift · <span class="key">Close</span> Non-linear slingshot with velocity tail
+    </p>
+  </div>
+
+  <canvas id="particle-canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const mouse = {
+      x: null,
+      y: null,
+      radius: 280, // Electric field attraction radius
+      strength: 0.85 // Strength of attraction
+    };
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    // Touch support for mobile devices
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    window.addEventListener('touchend', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    const PARTICLE_COUNT = 160;
+
+    class ElectricParticle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(init = false) {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        // Ambient gentle drift velocity
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.2 + Math.random() * 0.4;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        
+        // Base point size
+        this.size = 1.2 + Math.random() * 0.8;
+        this.baseAlpha = 0.35 + Math.random() * 0.3;
+        
+        // History for motion tail
+        this.history = [];
+        this.maxHistory = 6;
+      }
+
+      update() {
+        // Record current position for tail
+        this.history.push({ x: this.x, y: this.y });
+        if (this.history.length > this.maxHistory) {
+          this.history.shift();
+        }
+
+        // Calculate Electric Field Attraction
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < mouse.radius && dist > 8) {
+            // Non-linear electric field formula: force increases rapidly as distance decreases
+            const normalized = (mouse.radius - dist) / mouse.radius;
+            const force = Math.pow(normalized, 1.8) * mouse.strength;
+
+            const ax = (dx / dist) * force;
+            const ay = (dy / dist) * force;
+
+            this.vx += ax;
+            this.vy += ay;
+          }
+        }
+
+        // Damping / Friction (simulating resistance in a field)
+        this.vx *= 0.94;
+        this.vy *= 0.94;
+
+        // Ensure ambient drift doesn't completely die out when far away
+        const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+        if (currentSpeed < 0.25) {
+          this.vx += (Math.random() - 0.5) * 0.08;
+          this.vy += (Math.random() - 0.5) * 0.08;
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Screen wrap-around
+        if (this.x < -20) this.x = width + 20;
+        if (this.x > width + 20) this.x = -20;
+        if (this.y < -20) this.y = height + 20;
+        if (this.y > height + 20) this.y = -20;
+      }
+
+      draw() {
+        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+
+        // 1. Draw Tail ONLY when moving fast (whizzing past)
+        // Speed threshold: gentle drift (< 0.9px/frame) has almost 0 tail
+        const tailThreshold = 0.8;
+        if (speed > tailThreshold && this.history.length > 1) {
+          const tailIntensity = Math.min((speed - tailThreshold) / 4.0, 1.0);
+          
+          ctx.beginPath();
+          ctx.moveTo(this.history[0].x, this.history[0].y);
+          for (let i = 1; i < this.history.length; i++) {
+            ctx.lineTo(this.history[i].x, this.history[i].y);
+          }
+          ctx.lineTo(this.x, this.y);
+
+          // Electric gradient streak
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.45 * tailIntensity})`;
+          ctx.lineWidth = this.size * 0.8;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+
+          // Subtle faint outer glow for high-speed whizzing
+          if (speed > 2.5) {
+            ctx.beginPath();
+            ctx.moveTo(this.history[0].x, this.history[0].y);
+            ctx.lineTo(this.x, this.y);
+            ctx.strokeStyle = `rgba(165, 215, 255, ${0.2 * tailIntensity})`;
+            ctx.lineWidth = this.size * 2.2;
+            ctx.stroke();
+          }
+        }
+
+        // 2. Draw Core White Dot
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        
+        // As speed increases, the dot becomes brighter and slightly glows
+        const brightness = Math.min(this.baseAlpha + (speed / 6.0), 1.0);
+        ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+        ctx.shadowColor = speed > 2.0 ? 'rgba(255, 255, 255, 0.6)' : 'transparent';
+        ctx.shadowBlur = speed > 2.0 ? 6 : 0;
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset shadow for performance
+      }
+    }
+
+    const particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new ElectricParticle());
+    }
+
+    // Animation Loop
+    function animate() {
+      // Clear with slight trailing fade or crisp clear
+      ctx.fillStyle = '#05070c';
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw subtle mouse field indicator
+      if (mouse.x !== null && mouse.y !== null) {
+        const fieldGlow = ctx.createRadialGradient(
+          mouse.x, mouse.y, 0,
+          mouse.x, mouse.y, mouse.radius
+        );
+        fieldGlow.addColorStop(0, 'rgba(255, 255, 255, 0.03)');
+        fieldGlow.addColorStop(0.7, 'rgba(255, 255, 255, 0.008)');
+        fieldGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = fieldGlow;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, mouse.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Update and draw particles
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>

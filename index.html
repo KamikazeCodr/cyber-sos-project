@@ -1,0 +1,3390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#030712" />
+  <title>Cyber SOS · Digital Safety & Decision Benchmark | BMSIT&M</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome & Chart.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Tron Themed Cyber Vector Emoji Suite (Zero External Dependencies) -->
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --bg-panel: rgba(15, 23, 42, 0.82);
+      --bg-card: rgba(15, 23, 42, 0.6);
+      --border-hud: rgba(255, 255, 255, 0.08);
+      --border-hud-strong: rgba(56, 189, 248, 0.45);
+      --atlassian-blue: #0c66e4;
+      --atlassian-blue-hover: #0055cc;
+      --cyber-cyan: #38bdf8;
+      --cyber-emerald: #10b981;
+      --cyber-crimson: #f43f5e;
+      --cyber-amber: #f59e0b;
+      --cyber-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-heading: #ffffff;
+      --text-body: #cbd5e1;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Segoe UI Mono', monospace;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { color-scheme: dark; scroll-behavior: smooth; }
+    ::selection { background: var(--cyber-cyan); color: #000; }
+
+    /* ========================================================= */
+    /* TRON THEMED CYBER EMOJI PACK (NEON VECTOR GLYPHS)         */
+    /* ========================================================= */
+    .tron-glyph {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: -0.16em;
+      width: 1.15em;
+      height: 1.15em;
+      margin: 0 0.22em 0 0.05em;
+      line-height: 1;
+      position: relative;
+    }
+    .tron-glyph svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 0 3px currentColor);
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+    .tron-glyph:hover svg {
+      transform: scale(1.18);
+      filter: drop-shadow(0 0 6px currentColor);
+    }
+    .tron-cyan { color: #00f2fe; }
+    .tron-emerald { color: #00ffa3; }
+    .tron-amber { color: #ffb700; }
+    .tron-crimson { color: #ff2a5f; }
+    .tron-purple { color: #c084fc; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-body);
+      font-family: var(--font-sans);
+      font-size: 14.5px;
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Subtle Architectural Background Grid */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #bg-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 2;
+    }
+
+    .font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+    /* Atlassian Surface Card */
+    .hud-card {
+      position: relative;
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-hud);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      background: rgba(3, 7, 18, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-hud);
+    }
+
+    .telemetry-chip {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-hud);
+      background: rgba(56, 189, 248, 0.06);
+      color: var(--cyber-cyan);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyber-emerald);
+      box-shadow: 0 0 8px var(--cyber-emerald);
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    main {
+      position: relative;
+      z-index: 10;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .view { display: none; }
+    .view.is-active { display: block; animation: hudFadeIn 0.25s ease-out; }
+    @keyframes hudFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1.hud-title {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: clamp(1.55rem, 3vw, 2.25rem);
+      letter-spacing: -0.025em;
+      line-height: 1.25;
+      color: var(--text-heading);
+    }
+
+    .hud-tag {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cyber-cyan);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* ========================================================= */
+    /* ULTRA-REALISTIC FLAGSHIP SMARTPHONE & GOOGLE PAY UI       */
+    /* ========================================================= */
+    .smartphone-wrapper {
+      position: relative;
+      width: 390px;
+      margin: 16px auto;
+      filter: drop-shadow(0 25px 60px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 45px rgba(14, 165, 233, 0.12));
+    }
+    .phone-btn-volume-up, .phone-btn-volume-down, .phone-btn-power {
+      position: absolute;
+      background: #334155;
+      border-radius: 3px;
+      z-index: 1;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .phone-btn-volume-up { left: -6px; top: 120px; width: 5px; height: 48px; }
+    .phone-btn-volume-down { left: -6px; top: 180px; width: 5px; height: 48px; }
+    .phone-btn-power { right: -6px; top: 145px; width: 5px; height: 68px; }
+
+    .smartphone-chassis {
+      position: relative;
+      background: linear-gradient(145deg, #475569, #1e293b 40%, #0f172a 100%);
+      border-radius: 54px;
+      padding: 11px;
+      box-shadow: 
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.22),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        0 0 0 1px #020617;
+    }
+    .smartphone-screen-bezel {
+      position: relative;
+      background: #000000;
+      border-radius: 44px;
+      padding: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    .smartphone-display {
+      position: relative;
+      background: #ffffff;
+      border-radius: 40px;
+      overflow: hidden;
+      height: 720px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1f1f1f;
+      user-select: none;
+    }
+    .smartphone-display::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 200px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.04) 45%, transparent 100%);
+      pointer-events: none;
+      z-index: 100;
+    }
+    .phone-top-bar {
+      position: relative;
+      height: 48px;
+      padding: 10px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      z-index: 50;
+    }
+    .phone-time {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.2px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .phone-island {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 10px;
+      width: 108px;
+      height: 28px;
+      background: #000000;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    }
+    .island-cam {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1e293b, #030712 70%);
+      box-shadow: inset 0 0 1px #38bdf8;
+      margin-left: auto;
+    }
+    .island-sensor {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #111827;
+    }
+    .phone-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #1a1a1a;
+    }
+    .gpay-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 18px 10px;
+      background: #ffffff;
+      border-bottom: 1px solid #f1f3f4;
+      z-index: 10;
+    }
+    .gpay-nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .gpay-nav-btn:hover { background: #f1f3f4; }
+    .gpay-nav-heading {
+      font-size: 17px;
+      font-weight: 500;
+      color: #1f1f1f;
+      letter-spacing: -0.1px;
+    }
+    .gpay-scroll-body {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 12px 18px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .gpay-scroll-body::-webkit-scrollbar { display: none; }
+    .gpay-merchant-avatar-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .gpay-merchant-avatar {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #0f172a;
+      border: 2px solid #ffffff;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .gpay-verified-badge {
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      background: #1a73e8;
+      color: #ffffff;
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.2px solid #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .gpay-merchant-title {
+      font-size: 16.5px;
+      font-weight: 600;
+      color: #1f1f1f;
+      text-align: center;
+      letter-spacing: -0.2px;
+    }
+    .gpay-merchant-vpa {
+      font-size: 13px;
+      color: #5f6368;
+      margin-top: 2px;
+      text-align: center;
+    }
+    .gpay-trust-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #e8f0fe;
+      color: #0b57d0;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 12px;
+      border-radius: 14px;
+      margin-top: 6px;
+    }
+    .gpay-payment-amount {
+      margin: 10px 0 8px;
+      text-align: center;
+    }
+    .gpay-curr-symbol {
+      font-size: 26px;
+      font-weight: 500;
+      color: #1f1f1f;
+      vertical-align: top;
+      margin-right: 2px;
+    }
+    .gpay-val-digits {
+      font-size: 38px;
+      font-weight: 600;
+      color: #1f1f1f;
+      letter-spacing: -1px;
+    }
+    .gpay-subtext-memo {
+      font-size: 12px;
+      color: #5f6368;
+      margin-top: 1px;
+    }
+    .gpay-details-card {
+      width: 100%;
+      background: #f8fafd;
+      border: 1px solid #d3e3fd;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    .gpay-details-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #0b57d0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e0e2ec;
+    }
+    .gpay-details-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      padding: 3.5px 0;
+      color: #444746;
+    }
+    .gpay-details-row strong {
+      font-weight: 600;
+      color: #1f1f1f;
+    }
+    .gpay-trap-highlight {
+      color: #1f1f1f !important;
+      font-weight: 600 !important;
+      font-size: 13px !important;
+      background: transparent !important;
+      padding: 0 !important;
+    }
+    .gpay-legal-clause {
+      font-size: 10.5px;
+      color: #747775;
+      line-height: 1.45;
+      text-align: center;
+      padding: 0 4px;
+      margin-bottom: 8px;
+    }
+    .gpay-bottom-controls {
+      padding: 8px 18px 8px;
+      background: #ffffff;
+      border-top: 1px solid #f1f3f4;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      z-index: 10;
+    }
+    .gpay-btn-authorize {
+      width: 100%;
+      height: 46px;
+      background: #0b57d0;
+      color: #ffffff;
+      border: none;
+      border-radius: 24px;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+    .gpay-btn-authorize:hover {
+      background: #0842a0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(11, 87, 208, 0.35);
+    }
+    .gpay-btn-authorize.is-active {
+      box-shadow: 0 0 0 3px #1a73e8, 0 4px 12px rgba(11, 87, 208, 0.4);
+      background: #0842a0;
+    }
+    .gpay-btn-decline {
+      width: 100%;
+      height: 38px;
+      background: transparent;
+      color: #0b57d0;
+      border: 1px solid #747775;
+      border-radius: 20px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .gpay-btn-decline:hover {
+      background: #f8fafd;
+      border-color: #0b57d0;
+    }
+    .gpay-btn-decline.is-active {
+      background: #fce8e6;
+      border-color: #b3261e;
+      color: #b3261e;
+    }
+    .gpay-upi-branding {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding-top: 2px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #747775;
+    }
+    .phone-home-indicator {
+      width: 130px;
+      height: 4px;
+      background: #1f1f1f;
+      border-radius: 4px;
+      margin: 6px auto 2px;
+    }
+
+    /* ========================================================= */
+    /* REALISTIC GOOGLE OAUTH BROWSER WINDOW                     */
+    /* ========================================================= */
+    .oauth-window {
+      max-width: 520px;
+      margin: 16px auto;
+      background: #ffffff;
+      color: #1f1f1f;
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
+      overflow: hidden;
+      font-family: 'Roboto', -apple-system, sans-serif;
+      text-align: left;
+      border: 1px solid #dadce0;
+    }
+    .oauth-browser-bar {
+      background: #f1f3f4;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #dadce0;
+      font-size: 12.5px;
+      color: #5f6368;
+    }
+    .oauth-content {
+      padding: 24px;
+    }
+
+    /* ========================================================= */
+    /* REALISTIC OUTLOOK WEB EMAIL CLIENT                        */
+    /* ========================================================= */
+    .email-window {
+      max-width: 640px;
+      margin: 16px auto;
+      background: #ffffff;
+      color: #1f1f1f;
+      border-radius: 12px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
+      overflow: hidden;
+      font-family: 'Segoe UI', -apple-system, sans-serif;
+      text-align: left;
+      border: 1px solid #edebe9;
+    }
+    .email-topbar {
+      background: #0078d4;
+      color: #ffffff;
+      padding: 11px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    
+    /* Native Outlook Web Action Buttons */
+    .outlook-action-strip {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .outlook-btn-primary {
+      height: 38px;
+      padding: 0 20px;
+      background: #0078d4;
+      color: #ffffff;
+      border: 1px solid #0078d4;
+      border-radius: 4px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .outlook-btn-primary:hover {
+      background: #106ebe;
+      border-color: #106ebe;
+    }
+    .outlook-btn-primary.is-active {
+      box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.4);
+      background: #005a9e;
+    }
+    .outlook-btn-secondary {
+      height: 38px;
+      padding: 0 18px;
+      background: #ffffff;
+      color: #323130;
+      border: 1px solid #8a8886;
+      border-radius: 4px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .outlook-btn-secondary:hover {
+      background: #f3f2f1;
+      border-color: #323130;
+    }
+    .outlook-btn-secondary.is-active {
+      background: #edebe9;
+      border-color: #0078d4;
+      color: #0078d4;
+    }
+
+    .email-body-pad {
+      padding: 22px;
+    }
+
+    /* Reasoning Container */
+    .reasoning-box {
+      border: 1px solid var(--border-hud-strong);
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 10px;
+      padding: 22px;
+      margin-top: 24px;
+      animation: hudFadeIn 0.25s ease-out;
+    }
+    .reason-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-hud);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      color: var(--text-main);
+      width: 100%;
+      text-align: left;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.15s ease;
+    }
+    .reason-row:hover {
+      border-color: var(--border-hud-strong);
+      background: rgba(56, 189, 248, 0.08);
+      transform: translateX(4px);
+    }
+    .reason-row.is-selected {
+      border-color: #fff;
+      background: rgba(255, 255, 255, 0.14);
+      font-weight: 550;
+    }
+
+    /* Certainty Matrix */
+    .cbm-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cbm-cell {
+      border: 1px solid var(--border-hud);
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.35);
+      padding: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .cbm-cell:hover {
+      border-color: var(--border-hud-strong);
+      background: rgba(56, 189, 248, 0.06);
+    }
+    .cbm-cell.is-selected { border-color: #fff; background: rgba(255, 255, 255, 0.12); }
+    .cbm-cell.tier-1.is-selected { border-color: var(--cyber-amber); background: rgba(245, 158, 11, 0.12); }
+    .cbm-cell.tier-2.is-selected { border-color: var(--cyber-cyan); background: rgba(56, 189, 248, 0.14); }
+    .cbm-cell.tier-3.is-selected { border-color: var(--cyber-emerald); background: rgba(16, 185, 129, 0.14); }
+
+    
+    select.hud-select {
+      width: 100%;
+      background: #000000;
+      border: 1px solid var(--border-hud);
+      border-radius: 6px;
+      padding: 12px 16px;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    select.hud-select:focus {
+      border-color: var(--cyber-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+    }
+    select.hud-select:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    select.hud-select option {
+      background: #0a0f1d;
+      color: #ffffff;
+      padding: 10px;
+    }
+
+    
+    /* Personalized Advisory Styles */
+    .advisory-card {
+      border: 1px solid var(--border-hud);
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+    }
+    .advisory-card.vuln {
+      border-left: 4px solid var(--cyber-crimson);
+      background: rgba(244, 63, 94, 0.05);
+    }
+    .advisory-card.lucky {
+      border-left: 4px solid var(--cyber-amber);
+      background: rgba(245, 158, 11, 0.05);
+    }
+    .advisory-card.mastery {
+      border-left: 4px solid var(--cyber-emerald);
+      background: rgba(16, 185, 129, 0.05);
+    }
+    .advisory-card.remediated {
+      border-left: 4px solid var(--cyber-cyan);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%);
+      border-color: rgba(6, 182, 212, 0.3);
+    }
+    .advisory-card.paranoia {
+      border-left: 4px solid #a855f7;
+      background: rgba(168, 85, 247, 0.05);
+    }
+    .advisory-directive {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: rgba(12, 102, 228, 0.08);
+      border-radius: 4px;
+      border: 1px solid rgba(12, 102, 228, 0.25);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: #93c5fd;
+      line-height: 1.55;
+    }
+    .badge-operator-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .hud-btn {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: 1px solid var(--atlassian-blue);
+      background: var(--atlassian-blue);
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    .hud-btn:hover { background: var(--atlassian-blue-hover); border-color: var(--atlassian-blue-hover); }
+    .hud-btn:disabled { background: #1e293b; border-color: #334155; color: #64748b; cursor: not-allowed; box-shadow: none; transform: none; }
+
+    .hud-btn-ghost {
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .hud-btn-ghost:hover { border-color: var(--cyber-cyan); color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .metric-module {
+      border: 1px solid var(--border-hud);
+      background: rgba(11, 15, 25, 0.95);
+      border-radius: 8px;
+      padding: 18px 16px;
+      position: relative;
+    }
+    .metric-module::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--cyber-cyan), transparent);
+    }
+    .metric-lbl {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .metric-val {
+      font-family: var(--font-sans);
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-top: 6px;
+      color: #fff;
+    }
+
+    .video-viewport {
+      border: 1px solid var(--border-hud-strong);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000000;
+      position: relative;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.96);
+      backdrop-filter: blur(8px);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      text-align: center;
+      border: 2px solid var(--cyber-amber);
+    }
+
+    @media (max-width: 768px) {
+      .telemetry-grid { grid-template-columns: repeat(2, 1fr); }
+      .cbm-grid { grid-template-columns: 1fr; }
+      .hud-card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Particle Background Layer -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Top Cyber Command Header -->
+  <header class="topbar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="width: 28px; height: 28px; border: 1px solid var(--cyber-cyan); border-radius: 6px; display: flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.1); color: var(--cyber-cyan); font-size: 0.85rem;">
+        <i class="fa-solid fa-terminal"></i>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="pulse-dot"></span>
+          <span style="font-family: var(--font-sans); font-size: 0.95rem; font-weight: 700; color: #fff; letter-spacing: -0.01em;">
+            Cyber SOS
+          </span>
+          <span style="font-family: var(--font-sans); font-size: 0.78rem; color: #94a3b8; font-weight: 500;">· Student Safety Benchmark</span>
+        </div>
+        <span style="font-family: var(--font-sans); font-size: 0.72rem; color: var(--text-muted);">Department of Computer Science & Engineering · BMSIT&M</span>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div id="active-candidate-tag" class="telemetry-chip" style="display: none; background: rgba(12, 102, 228, 0.15); color: #579dff; border-color: rgba(12, 102, 228, 0.3);">
+        <span style="color: var(--text-muted);">Student:</span> <span id="tag-name">Student</span> · <span id="tag-sec" style="color: #fff;">CSE</span>
+      </div>
+
+      <button class="hud-btn-ghost" onclick="toggleAudio()">
+        <i id="audio-icon" class="fa-solid fa-volume-high"></i> <span id="audio-label">Sound: On</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- VIEW 0: ONBOARDING -->
+    <section id="view-onboarding" class="view is-active">
+      <div style="margin-bottom: 28px;">
+        <div class="hud-tag" style="color: #579dff;"><i class="fa-solid fa-shield-halved"></i> Student Safety Benchmark</div>
+        <h1 class="hud-title">Digital Safety & Decision-Making Test</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 10px; max-width: 720px; font-family: var(--font-sans);">
+          Instead of traditional multiple-choice questions, you'll review real-world screens—like payment requests, login popups, and email attachments. Choose what action you would take, explain your reasoning, and see how well you spot digital traps.
+        </p>
+      </div>
+
+      <div class="hud-card" style="max-width: 650px;">
+        <div class="hud-tag" style="color: var(--cyber-emerald);"><i class="fa-solid fa-lock"></i> Student Information</div>
+        <h2 style="font-family: var(--font-sans); font-size: 1.25rem; font-weight: 600; color: #fff; margin-bottom: 6px;">Enter Your Details</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 22px; font-family: var(--font-sans);">
+          This benchmark is part of a student research project at BMSIT&M. All responses are recorded anonymously for academic evaluation.
+        </p>
+
+        <form onsubmit="handleStart(event)">
+          <div style="margin-bottom: 18px;">
+            <label style="display: block; font-family: var(--font-sans); font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+              Full Name
+            </label>
+            <input type="text" id="input-name" required placeholder="Enter your full name"
+              style="width: 100%; background: #101214; border: 1px solid #333c48; border-radius: 4px; padding: 10px 14px; color: #fff; font-family: var(--font-sans); font-size: 0.92rem;" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px;">
+            <div>
+              <label style="display: block; font-family: var(--font-sans); font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+                Department / Branch
+              </label>
+              <select id="input-branch" class="hud-select" required onchange="updateSectionOptions()">
+                <option value="" disabled selected>Select Branch</option>
+                <option value="CSE">CSE (Computer Science & Engineering)</option>
+                <option value="CSBS">CSBS (CS & Business Systems)</option>
+                <option value="AIML">AIML (AI & Machine Learning)</option>
+                <option value="ECE">ECE (Electronics & Communication)</option>
+                <option value="EEE">EEE (Electrical & Electronics)</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display: block; font-family: var(--font-sans); font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+                Section
+              </label>
+              <select id="input-section" class="hud-select" required disabled>
+                <option value="" disabled selected>Select Branch First</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="hud-btn" style="width: 100%; justify-content: center;">
+            Start Assessment <i class="fa-solid fa-arrow-right text-xs" style="margin-left: 6px;"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- VIEW 1: INTERACTIVE INCIDENT EVALUATION -->
+    <section id="view-eval" class="view">
+      
+      <!-- Stage Telemetry Strip -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <div class="telemetry-chip" id="eval-phase-chip">
+          <span class="pulse-dot"></span> <span id="eval-phase-title">Phase 1: Initial Assessment (Pre-Training)</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <div class="telemetry-chip">
+            <i class="fa-regular fa-clock text-xs"></i> <span id="eval-stopwatch">00:00.00</span>
+          </div>
+          <div class="telemetry-chip" style="color: #fff;">
+            <span id="eval-step-tag">Scenario 1 of 5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Scenario Card -->
+      <div class="hud-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div>
+            <div class="hud-tag" id="eval-threat-class" style="color: #579dff; font-weight: 600;">Scenario 1</div>
+            <h2 id="eval-scenario-heading" style="font-family: var(--font-sans); font-size: 1.35rem; font-weight: 600; color: #fff; letter-spacing: -0.015em;">Scenario Title</h2>
+          </div>
+          <span class="telemetry-chip" style="color: #4bce97; border-color: rgba(75, 206, 151, 0.3); background: rgba(75, 206, 151, 0.1);">
+            <i class="fa-solid fa-circle-dot mr-1"></i> Active Scenario
+          </span>
+        </div>
+
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 14px; font-family: var(--font-sans);">
+          Review the simulated screen below and <strong>tap or click the button</strong> you would choose in real life:
+        </p>
+
+        <!-- Photorealistic Screen Mockup Viewport -->
+        <div id="eval-mockup-container">
+          <!-- Injected dynamically -->
+        </div>
+
+        <!-- Follow-Up Cognitive Reasoning Box -->
+        <div id="eval-reasoning-box" class="reasoning-box" style="display: none;">
+          <div class="hud-tag" style="color: #579dff; margin-bottom: 6px;">
+            <i class="fa-regular fa-circle-question"></i> Decision Reasoning
+          </div>
+          <p id="eval-reasoning-prompt" style="font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 14px;">
+            Why did you choose this option?
+          </p>
+          <div id="eval-reasoning-list">
+            <!-- Dynamically injected choices -->
+          </div>
+
+          <!-- Certainty-Based Marking (CBM) Section -->
+          <div style="margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-hud);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="font-size: 0.88rem; font-weight: 600; color: #f1f5f9; font-family: var(--font-sans);">
+                <i class="fa-solid fa-sliders text-xs mr-1" style="color: #579dff;"></i> How confident are you in this decision?
+              </div>
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-sans);">Shortcuts: [1] [2] [3]</span>
+            </div>
+
+            <div class="cbm-grid">
+              <div class="cbm-cell tier-1" id="cbm-1" onclick="selectCertainty(1)">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <strong style="color: var(--cyber-amber); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;">Tier 1</strong>
+                  <span class="text-xs" style="color: var(--cyber-amber); font-weight: 600;">[1]</span>
+                </div>
+                <div style="font-size: 0.88rem; font-weight: 600; color: #fff; margin-bottom: 2px;">Just Guessing</div>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Low confidence · Picked on intuition</span>
+              </div>
+
+              <div class="cbm-cell tier-2" id="cbm-2" onclick="selectCertainty(2)">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <strong style="color: var(--cyber-cyan); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;">Tier 2</strong>
+                  <span class="text-xs" style="color: var(--cyber-cyan); font-weight: 600;">[2]</span>
+                </div>
+                <div style="font-size: 0.88rem; font-weight: 600; color: #fff; margin-bottom: 2px;">Fairly Confident</div>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Moderate confidence · Seems likely</span>
+              </div>
+
+              <div class="cbm-cell tier-3" id="cbm-3" onclick="selectCertainty(3)">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <strong style="color: var(--cyber-emerald); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;">Tier 3</strong>
+                  <span class="text-xs" style="color: var(--cyber-emerald); font-weight: 600;">[3]</span>
+                </div>
+                <div style="font-size: 0.88rem; font-weight: 600; color: #fff; margin-bottom: 2px;">Certain</div>
+                <span style="font-size: 0.75rem; color: #94a3b8;">High confidence · Spotted clear clues</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+            <button id="btn-confirm-step" class="hud-btn" onclick="submitScenarioStep()" disabled>
+              <i class="fa-solid fa-check mr-1"></i> Confirm & Continue
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 2: VIDEO INTERVENTION -->
+    <section id="view-video" class="view">
+      <div style="margin-bottom: 24px;">
+        <div class="hud-tag" style="color: #579dff;"><i class="fa-solid fa-graduation-cap"></i> Learning Guide</div>
+        <h1 class="hud-title">Key Principles of Digital Safety</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 8px;">
+          Review these essential rules to spot hidden scams, verify official requests, and avoid fraudulent traps.
+        </p>
+      </div>
+
+      <div class="hud-card">
+        <div class="video-viewport">
+          
+          <div id="video-defocus-alert" class="modal-overlay" style="display: none;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(245, 158, 11, 0.2); color: var(--cyber-amber); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 12px;">
+              <i class="fa-solid fa-pause"></i>
+            </div>
+            <h2 style="font-family: var(--font-sans); font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 8px;">Assessment Paused: Window Inactive</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 460px; margin-bottom: 20px; font-family: var(--font-sans);">
+              Please keep this window active while the learning guide is in progress.
+            </p>
+            <button class="hud-btn" onclick="resumeVideoFocus()">Resume Guide</button>
+          </div>
+
+          <div id="video-gate-modal" class="modal-overlay" style="display: none; border-color: #0c66e4;">
+            <div class="hud-tag" style="color: #579dff; margin-bottom: 8px;"><i class="fa-solid fa-circle-question"></i> Quick Question</div>
+            <h2 style="font-family: var(--font-sans); font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 14px; max-width: 580px;">
+              Can receiving money via UPI ever require setting up an AutoPay e-Mandate or entering a PIN?
+            </h2>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+              <button class="hud-btn" onclick="answerGate(true)">Never — You only enter a PIN or approve a mandate when paying out</button>
+              <button class="hud-btn-ghost" onclick="answerGate(false)">Yes — Sometimes needed to receive funds</button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-sans);">
+            <span><i class="fa-solid fa-book-open text-xs" style="color: #579dff;"></i> Guide: Essential Digital Safety Rules</span>
+            <span id="video-timer" style="font-family: var(--font-mono);">01:45 / 03:00</span>
+          </div>
+
+          <div style="text-align: center; padding: 28px 0;">
+            <div style="width: 54px; height: 54px; border: 1px solid rgba(12, 102, 228, 0.35); border-radius: 12px; background: rgba(12, 102, 228, 0.1); color: #579dff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 16px;">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 style="font-family: var(--font-sans); font-size: 1.35rem; font-weight: 700; margin-bottom: 8px; color: #fff;">Three Essential Rules to Remember</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 540px; margin: 0 auto; line-height: 1.6; font-family: var(--font-sans); text-align: left;">
+              1. Receiving money NEVER requires entering your PIN or approving an AutoPay mandate.<br/>
+              2. Official student portals only need basic name/email sign-in; never grant Drive or file permissions.<br/>
+              3. Check the end of file names. Scammers hide programs (.lnk, .exe) behind Word or Excel icons.
+            </p>
+          </div>
+
+          <div>
+            <div style="width: 100%; height: 3px; background: rgba(255, 255, 255, 0.1); border-radius: 999px; overflow: hidden; margin-bottom: 8px;">
+              <div id="video-prog" style="width: 60%; height: 100%; background: var(--cyber-cyan); transition: width 0.3s ease;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-sans);">
+              <span>Status: Active</span>
+              <span>Completion: 60%</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+          <button class="hud-btn" onclick="finishVideo()">
+            Begin Post-Training Assessment <i class="fa-solid fa-arrow-right text-xs" style="margin-left: 6px;"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: RESULTS -->
+    <section id="view-results" class="view">
+      <div style="margin-bottom: 24px;">
+        <div class="hud-tag" style="color: var(--cyber-emerald);"><i class="fa-solid fa-circle-check"></i> Assessment Complete</div>
+        <h1 class="hud-title">Your Digital Safety Assessment Report</h1>
+        <p style="color: var(--text-muted); font-size: 0.92rem; font-family: var(--font-sans); margin-top: 6px;">
+          Candidate: <span id="res-candidate-name" style="color: #fff; font-weight: 600;">Student</span> · Section: <span id="res-candidate-sec" style="color: #579dff; font-weight: 600;">CSE</span>
+        </p>
+      </div>
+
+      <div class="telemetry-grid">
+        <div class="metric-module">
+          <div class="metric-lbl">Pre-Test Score</div>
+          <div class="metric-val" id="kpi-pre" style="color: var(--cyber-crimson);">--</div>
+          <span class="font-mono text-xs" style="color: var(--text-muted);">Before Training</span>
+        </div>
+        <div class="metric-module">
+          <div class="metric-lbl">Post-Test Score</div>
+          <div class="metric-val" id="kpi-post" style="color: var(--cyber-emerald);">--</div>
+          <span class="font-mono text-xs" style="color: var(--text-muted);">After Training</span>
+        </div>
+        <div class="metric-module">
+          <div class="metric-lbl">Traps Avoided</div>
+          <div class="metric-val" id="kpi-errors" style="color: var(--cyber-amber);">--</div>
+          <span class="font-mono text-xs" style="color: var(--text-muted);">Scams You Learned to Spot</span>
+        </div>
+        <div class="metric-module">
+          <div class="metric-lbl">Average Decision Time</div>
+          <div class="metric-val" id="kpi-latency" style="color: var(--cyber-cyan);">--s</div>
+          <span class="font-mono text-xs" style="color: var(--text-muted);">Time Per Question</span>
+        </div>
+      </div>
+
+            <!-- Dynamic Personalized Advisory Container -->
+      <div class="hud-card" id="res-advisory-container" style="margin-top: 24px; text-align: left;">
+        <!-- Injected dynamically by generatePersonalizedAdvice() -->
+      </div>
+
+      <div class="hud-card" style="margin-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+          <div>
+            <div class="hud-tag" style="color: #579dff;"><i class="fa-solid fa-chart-line"></i> Confidence vs. Accuracy Analysis</div>
+            <h2 style="font-family: var(--font-sans); font-size: 1.25rem; font-weight: 600; color: #fff;">Decision Confidence vs. Accuracy Grid</h2>
+          </div>
+          <span class="telemetry-chip" style="color: var(--cyber-emerald); border-color: rgba(16, 185, 129, 0.3);">
+            Gardner-Medwin Model
+          </span>
+        </div>
+
+        <p style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-sans); margin-bottom: 20px;">
+          In digital security, confident mistakes represent the most dangerous blind spots. The goal of this assessment is to align high confidence with verified indicators.
+        </p>
+
+        <div style="height: 340px; position: relative;">
+          <canvas id="matrixChart"></canvas>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-hud); flex-wrap: wrap; gap: 12px;">
+          <div style="font-family: var(--font-sans); font-size: 0.78rem; color: var(--text-muted);">
+            Department of Computer Science & Engineering · BMSIT&M Societal Project (1BSOP308)
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button class="hud-btn" onclick="exportCSV()">
+              <i class="fa-solid fa-download text-xs mr-1"></i> Download Report (CSV)
+            </button>
+            <button class="hud-btn-ghost" onclick="location.reload()">
+              <i class="fa-solid fa-rotate text-xs mr-1"></i> Retake Assessment
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Particle Background Physics -->
+  <script>
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const mouse = { x: null, y: null, radius: 260, strength: 0.9 };
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+    class ElectricParticle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.25 + Math.random() * 0.45;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.size = 1.3 + Math.random() * 0.8;
+        this.baseAlpha = 0.35 + Math.random() * 0.3;
+        this.history = [];
+        this.maxHistory = 6;
+      }
+      update() {
+        this.history.push({ x: this.x, y: this.y });
+        if (this.history.length > this.maxHistory) this.history.shift();
+
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist < mouse.radius && dist > 10) {
+            const normalized = (mouse.radius - dist) / mouse.radius;
+            const force = Math.pow(normalized, 1.8) * mouse.strength;
+            this.vx += (dx / dist) * force;
+            this.vy += (dy / dist) * force;
+          }
+        }
+
+        this.vx *= 0.94;
+        this.vy *= 0.94;
+
+        const currentSpeed = Math.hypot(this.vx, this.vy);
+        if (currentSpeed < 0.25) {
+          this.vx += (Math.random() - 0.5) * 0.08;
+          this.vy += (Math.random() - 0.5) * 0.08;
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < -20) this.x = width + 20;
+        if (this.x > width + 20) this.x = -20;
+        if (this.y < -20) this.y = height + 20;
+        if (this.y > height + 20) this.y = -20;
+      }
+      draw() {
+        const speed = Math.hypot(this.vx, this.vy);
+        if (speed > 0.8 && this.history.length > 1) {
+          const tailIntensity = Math.min((speed - 0.8) / 3.5, 1.0);
+          ctx.beginPath();
+          ctx.moveTo(this.history[0].x, this.history[0].y);
+          for (let i = 1; i < this.history.length; i++) {
+            ctx.lineTo(this.history[i].x, this.history[i].y);
+          }
+          ctx.lineTo(this.x, this.y);
+          ctx.strokeStyle = `rgba(56, 189, 248, ${0.45 * tailIntensity})`;
+          ctx.lineWidth = this.size * 0.8;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        const brightness = Math.min(this.baseAlpha + (speed / 5.0), 1.0);
+        ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+        ctx.fill();
+      }
+    }
+
+    const particles = [];
+    for (let i = 0; i < 140; i++) particles.push(new ElectricParticle());
+
+    function renderCanvas() {
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, width, height);
+
+      if (mouse.x !== null && mouse.y !== null) {
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, mouse.radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      for (let p of particles) {
+        p.update();
+        p.draw();
+      }
+      requestAnimationFrame(renderCanvas);
+    }
+    renderCanvas();
+  </script>
+
+  <!-- Audio Synthesizer -->
+  <script>
+    class CyberAudio {
+      constructor() { this.ctx = null; this.enabled = true; }
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+      }
+      click() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.03);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.03);
+      }
+      success() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(880, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.22);
+      }
+      alert() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(330, this.ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.25);
+      }
+    }
+    const audio = new CyberAudio();
+
+    function toggleAudio() {
+      audio.enabled = !audio.enabled;
+      document.getElementById('audio-label').innerText = audio.enabled ? 'Sound: On' : 'Sound: Muted';
+      const icon = document.getElementById('audio-icon');
+      icon.className = audio.enabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+      if (audio.enabled) audio.click();
+    }
+  </script>
+
+  <!-- Super-Realistic Scenarios with Interactive Controls -->
+  <script>
+    const preScenarios = [
+      {
+        id: 'pre-1',
+        threatClass: 'Financial Security: AutoPay Mandate',
+        scenarioType: 'malicious',
+        title: 'Google Pay UPI AutoPay E-Mandate Authorization',
+        renderMockup: () => `
+          <div class="smartphone-wrapper">
+            <div class="phone-btn-volume-up"></div>
+            <div class="phone-btn-volume-down"></div>
+            <div class="phone-btn-power"></div>
+
+            <div class="smartphone-chassis">
+              <div class="smartphone-screen-bezel">
+                <div class="smartphone-display">
+                  
+                  <!-- Status Bar -->
+                  <div class="phone-top-bar">
+                    <div class="phone-time">09:41</div>
+                    <div class="phone-island">
+                      <div class="island-sensor"></div>
+                      <div class="island-cam"></div>
+                    </div>
+                    <div class="phone-icons">
+                      <svg width="16" height="11" viewBox="0 0 16 11" fill="#1a1a1a">
+                        <rect x="0" y="8" width="2.5" height="3" rx="0.5"/>
+                        <rect x="4.2" y="5.5" width="2.5" height="5.5" rx="0.5"/>
+                        <rect x="8.5" y="3" width="2.5" height="8" rx="0.5"/>
+                        <rect x="12.8" y="0" width="2.5" height="11" rx="0.5"/>
+                      </svg>
+                      <span style="font-size: 11px; font-weight: 700; margin: 0 1px;">5G</span>
+                      <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+                        <path d="M7.5 10.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z" fill="#1a1a1a"/>
+                        <path d="M4.2 6.8c1.8-1.5 4.8-1.5 6.6 0" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/>
+                        <path d="M1.5 3.9c3.3-2.7 8.7-2.7 12 0" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/>
+                      </svg>
+                      <svg width="22" height="11" viewBox="0 0 22 11" fill="none">
+                        <rect x="0.8" y="0.8" width="18" height="9.4" rx="2.8" stroke="#1a1a1a" stroke-width="1.1"/>
+                        <rect x="2.5" y="2.5" width="13" height="6" rx="1.5" fill="#1a1a1a"/>
+                        <path d="M20.2 3.8v3.4" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Google Pay Navigation -->
+                  <div class="gpay-navbar">
+                    <div class="gpay-nav-btn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                      </svg>
+                    </div>
+                    <div class="gpay-nav-heading">AutoPay request</div>
+                    <div class="gpay-nav-btn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#1f1f1f">
+                        <circle cx="12" cy="5" r="2"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <circle cx="12" cy="19" r="2"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Scrollable Body -->
+                  <div class="gpay-scroll-body">
+                    
+                    <!-- Merchant Identity -->
+                    <div class="gpay-merchant-avatar-wrap">
+                      <div class="gpay-merchant-avatar">
+                        <svg width="42" height="42" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="46" fill="#1e3a8a" stroke="#fbbf24" stroke-width="3"/>
+                          <circle cx="50" cy="50" r="38" fill="#0f172a"/>
+                          <path d="M35 55 a9 9 0 0 1 17 -4 a12 12 0 0 1 23 2 a8 8 0 0 1 -3 16 h-34 a7 7 0 0 1 -3 -14 z" fill="#38bdf8"/>
+                          <path d="M50 32 L72 40 L50 48 L28 40 Z" fill="#fbbf24"/>
+                          <polygon points="40,45 40,54 50,58 60,54 60,45 50,49" fill="#f59e0b"/>
+                        </svg>
+                      </div>
+                      <div class="gpay-verified-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="gpay-merchant-title">National Student Cloud Grant</div>
+                    <div class="gpay-merchant-vpa">studentgrant@okhdfcbank</div>
+                    <div class="gpay-trust-chip">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" fill="#0b57d0"/>
+                        <path d="M10 15.5l-3.5-3.5 1.41-1.41L10 12.67l6.09-6.09 1.41 1.41L10 15.5z" fill="#ffffff"/>
+                      </svg>
+                      Verified Business on Google Pay
+                    </div>
+
+                    <!-- Payment Amount -->
+                    <div class="gpay-payment-amount">
+                      <span class="gpay-curr-symbol">₹</span><span class="gpay-val-digits">0.00</span>
+                      <div class="gpay-subtext-memo">Validation debit to disburse ₹3,000.00 grant</div>
+                    </div>
+
+                    <!-- Mandate Terms Card -->
+                    <div class="gpay-details-card">
+                      <div class="gpay-details-header">
+                        <span>AutoPay terms</span>
+                        <span style="display: inline-flex; align-items: center; gap: 3px;">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0b57d0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                          UPI MANDATE
+                        </span>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Frequency</span>
+                        <strong>Monthly (As presented)</strong>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Debit ceiling</span>
+                        <strong class="gpay-trap-highlight">Up to ₹15,000.00</strong>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Debited from</span>
+                        <strong style="display: flex; align-items: center; gap: 4px;">
+                          <svg width="14" height="14" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="48" fill="#0083ca"/>
+                            <circle cx="50" cy="50" r="18" fill="#ffffff"/>
+                            <rect x="44" y="50" width="12" height="42" fill="#ffffff"/>
+                          </svg>
+                          SBI •••• 4012
+                        </strong>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Start date</span>
+                        <strong>22 Nov 2026</strong>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Valid until</span>
+                        <strong>31 Dec 2030</strong>
+                      </div>
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <div class="gpay-legal-clause">
+                      By tapping <strong>Set up AutoPay</strong>, you authorize recurring debits up to ₹15,000.00 whenever presented by this merchant until cancelled. You will enter your UPI PIN on the next screen.
+                    </div>
+
+                  </div>
+
+                  <!-- Sticky Bottom Interactive Controls -->
+                  <div class="gpay-bottom-controls">
+                    <button type="button" class="gpay-btn-authorize" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      Set up AutoPay
+                    </button>
+                    <button type="button" class="gpay-btn-decline" id="btn-act-safe" onclick="triggerInstinctAction('safe')">
+                      Decline
+                    </button>
+                    <div class="gpay-upi-branding">
+                      <span>POWERED BY</span>
+                      <span style="font-weight: 800; color: #0b57d0; font-size: 11px;">UPI</span>
+                      <span style="color: #ea4335;">|</span>
+                      <span style="font-weight: 800; color: #34a853; font-size: 11px;">BHIM</span>
+                    </div>
+                    <div class="phone-home-indicator"></div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          unsafe: {
+            label: 'SET UP AUTOPAY',
+            isSafe: false,
+            prompt: 'You authorized the AutoPay mandate. What led to this decision?',
+            reasons: [
+              { text: 'A) The validation fee is ₹0.00, meaning zero immediate money leaves my bank account.', isCorrect: false, trap: 'Small-Loss Blindness (Ignored the ₹15,000 monthly debit ceiling)' },
+              { text: 'B) The sender displays a Google Pay Verified Business badge, so recurring debits are guaranteed safe.', isCorrect: false, trap: 'Authority Fallacy' },
+              { text: 'C) I assumed I could quickly cancel or pause the mandate in Google Pay settings later.', isCorrect: false, trap: 'Deferred Friction Fallacy' }
+            ]
+          },
+          safe: {
+            label: 'DECLINE',
+            isSafe: true,
+            prompt: 'You declined the AutoPay mandate. What technical indicator identified this as fraud?',
+            reasons: [
+              { text: 'A) Inbound stipends, prizes, and grants NEVER require setting up an outbound recurring AutoPay mandate or entering a UPI PIN.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I don\'t have enough bank balance for this grant right now.', isCorrect: false, trap: 'Lucky Guess (Irrelevant reason)' },
+              { text: 'C) I prefer cash stipends instead of UPI.', isCorrect: false, trap: 'Lucky Guess (Personal preference)' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'pre-2',
+        threatClass: 'Authentication: Google OAuth SSO',
+        scenarioType: 'benign',
+        title: 'BMSIT Examination & Feedback Portal Sign-In',
+        renderMockup: () => `
+          <div class="oauth-window">
+            <div class="oauth-browser-bar">
+              <div style="display: flex; gap: 6px; margin-right: 8px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff5f56;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #27c93f;"></div>
+              </div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#137333"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              <span style="color: #202124; font-weight: 500;">accounts.google.com</span>/o/oauth2/v2/auth
+            </div>
+
+            <div class="oauth-content">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                <span style="font-size: 16px; font-weight: 500; color: #202124;">Sign in with Google</span>
+              </div>
+
+              <h3 style="font-size: 17px; font-weight: 500; color: #202124; margin-bottom: 6px; line-height: 1.3;">
+                BMSIT Student Examination Portal wants to access your Google Account
+              </h3>
+
+              <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; background: #f8fafd; border: 1px solid #dadce0; border-radius: 20px; margin-bottom: 18px;">
+                <div style="width: 20px; height: 20px; border-radius: 50%; background: #0b57d0; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">
+                  ${(candidate.name ? candidate.name.trim()[0] : 'S').toUpperCase()}
+                </div>
+                <span style="font-size: 12.5px; color: #3c4043; font-weight: 500;">
+                  ${candidate.name || 'Student Candidate'} · ${candidate.name ? candidate.name.toLowerCase().trim().replace(/[^a-z0-9]/g, '.') : 'student'}.${(candidate.branch || 'cse').toLowerCase()}@bmsit.ac.in
+                </span>
+              </div>
+
+              <div style="padding: 14px 16px; background: #f8fafd; border: 1px solid #c2e7ff; border-radius: 10px; margin-bottom: 18px;">
+                <div style="display: flex; gap: 8px; font-size: 12.5px; color: #004a77; font-weight: 700;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#004a77"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  <span>Standard Student Single Sign-On (SSO):</span>
+                </div>
+                <div style="margin-top: 8px; font-size: 12.5px; color: #1f1f1f; line-height: 1.6; padding-left: 24px;">
+                  • <strong>See your personal info, including email address (openid, profile, email)</strong><br/>
+                  • Associate you with your student institutional directory
+                </div>
+                <div style="margin-top: 8px; font-size: 11.5px; color: #444746; padding-left: 24px;">
+                  <em>This application cannot access, view, or modify your Google Drive or personal files.</em>
+                </div>
+              </div>
+
+              <p style="font-size: 11.5px; color: #5f6368; line-height: 1.45; margin-bottom: 22px;">
+                You can review or revoke permissions anytime in Google Account settings.
+              </p>
+
+              <!-- Authentic Controls -->
+              <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="gpay-btn-decline" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')"
+                  style="width: auto; padding: 0 22px; height: 38px; border-radius: 4px;">
+                  Cancel
+                </button>
+                <button type="button" class="gpay-btn-authorize" id="btn-act-safe" onclick="triggerInstinctAction('safe')"
+                  style="width: auto; padding: 0 26px; height: 38px; border-radius: 4px; box-shadow: none;">
+                  Allow
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          safe: {
+            label: 'ALLOW',
+            isSafe: true,
+            prompt: 'You allowed the sign-in request. What was your technical justification?',
+            reasons: [
+              { text: 'A) The OAuth scope is strictly limited to basic identity (openid, profile, email) without requesting sensitive Drive or file modification scopes.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I always click Allow on every sign-in prompt without reading.', isCorrect: false, trap: 'Blind Trust' },
+              { text: 'C) The browser icon was colorful so I approved it.', isCorrect: false, trap: 'Superficial Evaluation' }
+            ]
+          },
+          unsafe: {
+            label: 'CANCEL',
+            isSafe: false,
+            prompt: 'You chose to CANCEL this authentication. Why did you block access?',
+            reasons: [
+              { text: 'A) Operational Paranoia: I assumed all Google OAuth prompts must be phishing attacks even when scopes are minimal.', isCorrect: false, trap: 'False Positive Paranoia (Blocked legitimate college exam portal)' },
+              { text: 'B) I didn\'t read the requested scopes and panicked.', isCorrect: false, trap: 'Uncalibrated Avoidance' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'pre-3',
+        threatClass: 'Attachment Security: LNK Binary',
+        scenarioType: 'malicious',
+        title: 'Placement Cell Shortlist Advisory Attachment',
+        renderMockup: () => `
+          <div class="email-window">
+            <div class="email-topbar">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>Outlook Web · BMSIT Student Portal</span>
+              </div>
+              <span style="font-family: monospace; font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;">INBOX</span>
+            </div>
+
+            <div class="email-body-pad">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #edebe9; padding-bottom: 14px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <div style="width: 44px; height: 44px; border-radius: 50%; background: #0078d4; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                    T&P
+                  </div>
+                  <div>
+                    <div style="font-weight: 600; font-size: 14.5px; color: #201f1e;">Training & Placement Officer</div>
+                    <div style="font-size: 12px; color: #605e5c;">placement@bmsit-careerportal.ac.in</div>
+                  </div>
+                </div>
+                <div style="font-size: 11.5px; color: #a19f9d; font-family: monospace;">Today, 14:32</div>
+              </div>
+
+              <div style="font-size: 15.5px; font-weight: 600; color: #201f1e; margin-bottom: 12px;">
+                URGENT: Capgemini Shortlist Mismatch - Disqualification Advisory
+              </div>
+
+              <div style="font-size: 13px; color: #323130; line-height: 1.55; margin-bottom: 18px;">
+                Attention ${candidate.branch || 'Engineering'} students: candidates with mismatched CGPA records will be purged from today's recruitment drive unless verified before 17:00. Open the attached shortlist spreadsheet immediately to check your eligibility.
+              </div>
+
+              <!-- Malicious Attachment Tile -->
+              <div style="border: 1px solid #dadce0; border-radius: 8px; padding: 12px 16px; background: #faf9f8; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; background: #107c41; color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;">
+                    X
+                  </div>
+                  <div>
+                    <div style="font-size: 13.5px; font-weight: 600; color: #201f1e;">Capgemini_Shortlist_Discrepancies.xlsx.lnk</div>
+                    <div style="font-size: 11.5px; color: #605e5c;">14.2 KB</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Native Outlook Actions Strip -->
+              <div class="outlook-action-strip">
+                <button type="button" class="outlook-btn-primary" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download Attachment
+                </button>
+                <button type="button" class="outlook-btn-secondary" id="btn-act-safe" onclick="triggerInstinctAction('safe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  Report as Junk / Spam
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          unsafe: {
+            label: 'DOWNLOAD ATTACHMENT',
+            isSafe: false,
+            prompt: 'You chose to Download Attachment. What led to this decision?',
+            reasons: [
+              { text: 'A) The placement urgency (17:00 deadline) made me download it before verifying the file extension.', isCorrect: false, trap: 'Urgency Pressure Tactic' },
+              { text: 'B) It displayed a green Excel icon so I trusted it was a safe spreadsheet.', isCorrect: false, trap: 'Double Extension Mimicry (.xlsx.lnk shortcut)' },
+              { text: 'C) The sender name said Training & Placement Officer.', isCorrect: false, trap: 'Authority Fallacy (Ignored external spoof domain)' }
+            ]
+          },
+          safe: {
+            label: 'REPORT AS JUNK / SPAM',
+            isSafe: true,
+            prompt: 'You reported this email as junk/spam. What technical anomaly did you catch?',
+            reasons: [
+              { text: 'A) The file ends in `.xlsx.lnk` (a Windows shortcut binary capable of launching PowerShell stagers) and the sender uses a spoofed domain (`bmsit-careerportal.ac.in` instead of official `bmsit.in`).', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I don\'t check placement emails.', isCorrect: false, trap: 'Lucky Guess' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'pre-4',
+        threatClass: 'Email Verification: Department PDF',
+        scenarioType: 'benign',
+        title: 'Official Campus Recruitment Test Instructions',
+        renderMockup: () => `
+          <div class="email-window">
+            <div class="email-topbar">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>Outlook Web · BMSIT Student Portal</span>
+              </div>
+              <span style="font-family: monospace; font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;">INBOX</span>
+            </div>
+
+            <div class="email-body-pad">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #edebe9; padding-bottom: 14px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <div style="width: 44px; height: 44px; border-radius: 50%; background: #0078d4; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                    T&P
+                  </div>
+                  <div>
+                    <div style="font-weight: 600; font-size: 14.5px; color: #201f1e;">BMSIT Department Placement Cell</div>
+                    <div style="font-size: 12px; color: #605e5c;">placement@bmsit.in</div>
+                  </div>
+                </div>
+                <div style="font-size: 11.5px; color: #a19f9d; font-family: monospace;">Today, 10:15</div>
+              </div>
+
+              <div style="font-size: 15.5px; font-weight: 600; color: #201f1e; margin-bottom: 12px;">
+                Infosys Campus Recruitment 2026: Official Guidelines & Round 1 Schedule
+              </div>
+
+              <div style="font-size: 13px; color: #323130; line-height: 1.55; margin-bottom: 18px;">
+                Dear ${candidate.branch || 'CSE'} candidates, please review the attached PDF document containing the verified system readiness guidelines, test link protocols, and schedule for tomorrow's campus recruitment drive.
+              </div>
+
+              <!-- Genuine Attachment Tile -->
+              <div style="border: 1px solid #dadce0; border-radius: 8px; padding: 12px 16px; background: #faf9f8; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; background: #d83b01; color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+                    PDF
+                  </div>
+                  <div>
+                    <div style="font-size: 13.5px; font-weight: 600; color: #201f1e;">Infosys_Campus_Drive_Guidelines_2026.pdf</div>
+                    <div style="font-size: 11.5px; color: #605e5c;">2.4 MB</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Native Outlook Actions Strip -->
+              <div class="outlook-action-strip">
+                <button type="button" class="outlook-btn-primary" id="btn-act-safe" onclick="triggerInstinctAction('safe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download Attachment
+                </button>
+                <button type="button" class="outlook-btn-secondary" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  Report as Junk / Spam
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          safe: {
+            label: 'DOWNLOAD ATTACHMENT',
+            isSafe: true,
+            prompt: 'You downloaded the attachment. What verified its authenticity?',
+            reasons: [
+              { text: 'A) Sent from the genuine institutional domain (`placement@bmsit.in`) with a standard single `.pdf` extension matching legitimate department announcements.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I download every attachment sent to my inbox.', isCorrect: false, trap: 'Blind Habit' }
+            ]
+          },
+          unsafe: {
+            label: 'REPORT AS JUNK / SPAM',
+            isSafe: false,
+            prompt: 'You reported this email as junk/spam. Why did you flag it?',
+            reasons: [
+              { text: 'A) False Positive Paranoia: I assumed all emails with attachments must be malicious, leading to missing crucial recruitment instructions.', isCorrect: false, trap: 'False Positive Paranoia (Operational Disruption)' },
+              { text: 'B) I mistook a standard PDF document for an executable file.', isCorrect: false, trap: 'Uncalibrated Threat Detection' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'pre-5',
+        threatClass: 'Browser Extension: High-Privilege API',
+        scenarioType: 'malicious',
+        title: 'VTU Result & SGPA Calculator Extension',
+        renderMockup: () => `
+          <div class="oauth-window">
+            <div class="oauth-browser-bar">
+              <div style="display: flex; gap: 6px; margin-right: 8px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff5f56;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #27c93f;"></div>
+              </div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#0b57d0"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-7 2.5a2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5 2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5z"/></svg>
+              <span style="color: #202124; font-weight: 500;">chromewebstore.google.com</span>/detail/vtu-fast-sgpa
+            </div>
+
+            <div class="oauth-content">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 48px; height: 48px; border-radius: 10px; background: #0b57d0; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800;">
+                  VTU
+                </div>
+                <div>
+                  <div style="font-size: 17px; font-weight: 600; color: #202124;">Fast VTU SGPA & Attendance Sync</div>
+                  <div style="font-size: 12px; color: #5f6368;">Offered by: Student Dev Utilities · 4,800+ users</div>
+                </div>
+              </div>
+
+              <div style="padding: 14px 16px; background: #f8f9fa; border: 1px solid #dadce0; border-radius: 10px; margin-bottom: 18px;">
+                <div style="font-size: 12.5px; color: #5f6368; font-weight: 600; margin-bottom: 6px;">Permissions requested:</div>
+                <div style="font-size: 12.5px; color: #202124; line-height: 1.6;">
+                  • Read and change all your data on all websites you visit<br/>
+                  • Access browser cookies, stored tokens, and active session tabs
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="gpay-btn-decline" id="btn-act-safe" onclick="triggerInstinctAction('safe')"
+                  style="width: auto; padding: 0 20px; height: 38px; border-radius: 4px;">
+                  Cancel
+                </button>
+                <button type="button" class="gpay-btn-authorize" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')"
+                  style="width: auto; padding: 0 22px; height: 38px; border-radius: 4px; box-shadow: none;">
+                  Add to Chrome
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          unsafe: {
+            label: 'ADD TO CHROME',
+            isSafe: false,
+            prompt: 'You chose to Add Extension. What was your reasoning?',
+            reasons: [
+              { text: 'A) I wanted automated SGPA calculation and trusted the 4,800+ user count.', isCorrect: false, trap: 'Social Proof Manipulation' },
+              { text: 'B) I assumed browser extensions only access the VTU result webpage.', isCorrect: false, trap: 'Permission Scope Blindness' }
+            ]
+          },
+          safe: {
+            label: 'CANCEL',
+            isSafe: true,
+            prompt: 'You cancelled the installation. What technical vulnerability did you detect?',
+            reasons: [
+              { text: 'A) An SGPA calculator only requires local mathematics; requesting "read and change data on all websites" enables harvesting session cookies, passwords, and tokens across banking and college portals.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I already know my SGPA.', isCorrect: false, trap: 'Lucky Guess' }
+            ]
+          }
+        }
+      }
+    ];
+
+    const postScenarios = [
+      {
+        id: 'post-1',
+        threatClass: 'Financial Security: Refund Mandate',
+        scenarioType: 'malicious',
+        title: 'PhonePe / GPay Order Refund Mandate',
+        renderMockup: () => `
+          <div class="smartphone-wrapper">
+            <div class="phone-btn-volume-up"></div>
+            <div class="phone-btn-volume-down"></div>
+            <div class="phone-btn-power"></div>
+
+            <div class="smartphone-chassis">
+              <div class="smartphone-screen-bezel">
+                <div class="smartphone-display">
+                  
+                  <div class="phone-top-bar">
+                    <div class="phone-time">18:22</div>
+                    <div class="phone-island">
+                      <div class="island-sensor"></div>
+                      <div class="island-cam"></div>
+                    </div>
+                    <div class="phone-icons">
+                      <svg width="16" height="11" viewBox="0 0 16 11" fill="#1a1a1a">
+                        <rect x="0" y="8" width="2.5" height="3" rx="0.5"/>
+                        <rect x="4.2" y="5.5" width="2.5" height="5.5" rx="0.5"/>
+                        <rect x="8.5" y="3" width="2.5" height="8" rx="0.5"/>
+                        <rect x="12.8" y="0" width="2.5" height="11" rx="0.5"/>
+                      </svg>
+                      <span style="font-size: 11px; font-weight: 700; margin: 0 1px;">5G</span>
+                      <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+                        <path d="M7.5 10.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z" fill="#1a1a1a"/>
+                        <path d="M4.2 6.8c1.8-1.5 4.8-1.5 6.6 0" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/>
+                        <path d="M1.5 3.9c3.3-2.7 8.7-2.7 12 0" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/>
+                      </svg>
+                      <svg width="22" height="11" viewBox="0 0 22 11" fill="none">
+                        <rect x="0.8" y="0.8" width="18" height="9.4" rx="2.8" stroke="#1a1a1a" stroke-width="1.1"/>
+                        <rect x="2.5" y="2.5" width="10" height="6" rx="1.5" fill="#1a1a1a"/>
+                        <path d="M20.2 3.8v3.4" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="gpay-navbar">
+                    <div class="gpay-nav-btn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                      </svg>
+                    </div>
+                    <div class="gpay-nav-heading">AutoPay refund claim</div>
+                    <div class="gpay-nav-btn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#1f1f1f">
+                        <circle cx="12" cy="5" r="2"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <circle cx="12" cy="19" r="2"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="gpay-scroll-body">
+                    
+                    <div class="gpay-merchant-avatar-wrap">
+                      <div class="gpay-merchant-avatar" style="background: #ffebe6;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="#e03e1a">
+                          <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/>
+                        </svg>
+                      </div>
+                      <div class="gpay-verified-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="gpay-merchant-title">Delivery Dispute Settlement</div>
+                    <div class="gpay-merchant-vpa">refund-desk@okhdfcbank</div>
+
+                    <div class="gpay-payment-amount">
+                      <span class="gpay-curr-symbol">₹</span><span class="gpay-val-digits">480.00</span>
+                      <div class="gpay-subtext-memo">Order cancellation refund credit</div>
+                    </div>
+
+                    <div class="gpay-details-card">
+                      <div class="gpay-details-header">
+                        <span>AutoPay terms</span>
+                        <span>REFUND CHANNEL</span>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Initial charge</span>
+                        <strong style="color: #0b57d0;">₹0.00</strong>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Mandate debit limit</span>
+                        <strong class="gpay-trap-highlight">Up to ₹5,000.00</strong>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Debited from</span>
+                        <strong>HDFC Bank •••• 9102</strong>
+                      </div>
+                      <div class="gpay-details-row">
+                        <span>Frequency</span>
+                        <strong>As presented (Monthly)</strong>
+                      </div>
+                    </div>
+
+                    <div class="gpay-legal-clause">
+                      Approve mandate to establish automated reversal channel for order #99128. Merchant can debit up to ₹5,000 under mandate terms.
+                    </div>
+
+                  </div>
+
+                  <div class="gpay-bottom-controls">
+                    <button type="button" class="gpay-btn-authorize" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')">
+                      Set up AutoPay
+                    </button>
+                    <button type="button" class="gpay-btn-decline" id="btn-act-safe" onclick="triggerInstinctAction('safe')">
+                      Decline
+                    </button>
+                    <div class="gpay-upi-branding">
+                      <span>POWERED BY</span>
+                      <span style="font-weight: 800; color: #0b57d0; font-size: 11px;">UPI</span>
+                    </div>
+                    <div class="phone-home-indicator"></div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          unsafe: {
+            label: 'SET UP AUTOPAY',
+            isSafe: false,
+            prompt: 'You tapped "Set up AutoPay". What led to this decision?',
+            reasons: [
+              { text: 'A) The initial debit is ₹0.00 so I get my ₹480 refund without upfront cost.', isCorrect: false, trap: 'Small-Loss Blindness' },
+              { text: 'B) Customer support assured me this validates my bank connection.', isCorrect: false, trap: 'Social Proof Manipulation' }
+            ]
+          },
+          safe: {
+            label: 'DECLINE',
+            isSafe: true,
+            prompt: 'You tapped "Decline". What was your technical justification?',
+            reasons: [
+              { text: 'A) Legitimate refunds credit directly back to the source account; establishing a ₹5,000 AutoPay mandate enables recurring merchant debits.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I already ate the food so I don\'t need a refund.', isCorrect: false, trap: 'Lucky Guess' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'post-2',
+        threatClass: 'Authentication: Google OAuth SSO',
+        scenarioType: 'benign',
+        title: 'IEEE Student Branch Research Portal Access',
+        renderMockup: () => `
+          <div class="oauth-window">
+            <div class="oauth-browser-bar">
+              <div style="display: flex; gap: 6px; margin-right: 8px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff5f56;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #27c93f;"></div>
+              </div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#137333"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              <span style="color: #202124; font-weight: 500;">accounts.google.com</span>/o/oauth2/v2/auth
+            </div>
+
+            <div class="oauth-content">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                <span style="font-size: 16px; font-weight: 500; color: #202124;">Sign in with Google</span>
+              </div>
+
+              <h3 style="font-size: 17px; font-weight: 500; color: #202124; margin-bottom: 6px; line-height: 1.3;">
+                IEEE Student Branch BMSIT Chapter wants to access your Google Account
+              </h3>
+
+              <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; background: #f8fafd; border: 1px solid #dadce0; border-radius: 20px; margin-bottom: 18px;">
+                <div style="width: 20px; height: 20px; border-radius: 50%; background: #0b57d0; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">
+                  ${(candidate.name ? candidate.name.trim()[0] : 'S').toUpperCase()}
+                </div>
+                <span style="font-size: 12.5px; color: #3c4043; font-weight: 500;">
+                  ${candidate.name || 'Student Candidate'} · ${candidate.name ? candidate.name.toLowerCase().trim().replace(/[^a-z0-9]/g, '.') : 'student'}.${(candidate.branch || 'cse').toLowerCase()}@bmsit.ac.in
+                </span>
+              </div>
+
+              <div style="padding: 14px 16px; background: #f8fafd; border: 1px solid #c2e7ff; border-radius: 10px; margin-bottom: 18px;">
+                <div style="display: flex; gap: 8px; font-size: 12.5px; color: #004a77; font-weight: 700;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#004a77"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  <span>Verified Research Chapter SSO:</span>
+                </div>
+                <div style="margin-top: 8px; font-size: 12.5px; color: #1f1f1f; line-height: 1.6; padding-left: 24px;">
+                  • <strong>See your personal info, including email address (openid, profile, email)</strong><br/>
+                  • Associate your digital membership credential
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="gpay-btn-decline" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')"
+                  style="width: auto; padding: 0 22px; height: 38px; border-radius: 4px;">
+                  Cancel
+                </button>
+                <button type="button" class="gpay-btn-authorize" id="btn-act-safe" onclick="triggerInstinctAction('safe')"
+                  style="width: auto; padding: 0 26px; height: 38px; border-radius: 4px; box-shadow: none;">
+                  Allow
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          safe: {
+            label: 'ALLOW',
+            isSafe: true,
+            prompt: 'You allowed the sign-in request. What was your technical justification?',
+            reasons: [
+              { text: 'A) The request only demands basic profile info and email without sensitive file modification scopes.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I click allow everywhere.', isCorrect: false, trap: 'Blind Trust' }
+            ]
+          },
+          unsafe: {
+            label: 'CANCEL',
+            isSafe: false,
+            prompt: 'You cancelled this legitimate authentication. Why did you block access?',
+            reasons: [
+              { text: 'A) False Positive Paranoia: I assumed all Google OAuth prompts are attacks regardless of benign scope.', isCorrect: false, trap: 'False Positive Paranoia' },
+              { text: 'B) I panicked and cancelled.', isCorrect: false, trap: 'Uncalibrated Avoidance' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'post-3',
+        threatClass: 'Attachment Security: Double Extension',
+        scenarioType: 'malicious',
+        title: 'Shared Academic Archive Download',
+        renderMockup: () => `
+          <div class="email-window">
+            <div class="email-topbar" style="background: #0078d4;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>Outlook Web · Department Student Share</span>
+              </div>
+              <span style="font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;">Inbox</span>
+            </div>
+            <div class="email-body-pad">
+              <div style="font-size: 14px; color: #323130; margin-bottom: 14px;">
+                "Download the solved DBMS observation records and execution scripts for Lab 5."
+              </div>
+
+              <div style="border: 1px solid #dadce0; border-radius: 8px; padding: 14px 16px; background: #faf9f8; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; background: #d83b01; color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+                    PDF
+                  </div>
+                  <div>
+                    <div style="font-size: 13.5px; font-weight: 600; color: #201f1e;">DBMS_Lab_Manual_Full_Solution.pdf.exe</div>
+                    <div style="font-size: 11.5px; color: #605e5c;">8.4 MB</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Native Outlook Actions Strip -->
+              <div class="outlook-action-strip">
+                <button type="button" class="outlook-btn-primary" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download Attachment
+                </button>
+                <button type="button" class="outlook-btn-secondary" id="btn-act-safe" onclick="triggerInstinctAction('safe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  Report as Junk / Spam
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          unsafe: {
+            label: 'DOWNLOAD ATTACHMENT',
+            isSafe: false,
+            prompt: 'You downloaded the file. What led to this decision?',
+            reasons: [
+              { text: 'A) It has a PDF icon so Acrobat will open it safely.', isCorrect: false, trap: 'Icon Spoofing' },
+              { text: 'B) I urgently needed the lab solution before viva.', isCorrect: false, trap: 'Urgency Bias' }
+            ]
+          },
+          safe: {
+            label: 'REPORT AS JUNK / SPAM',
+            isSafe: true,
+            prompt: 'You reported the file as junk/spam. What was your technical justification?',
+            reasons: [
+              { text: 'A) The `.pdf.exe` double extension hides a Windows executable binary designed to execute malware while mimicking a document icon.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I already completed Lab 5.', isCorrect: false, trap: 'Lucky Guess' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'post-4',
+        threatClass: 'Email Verification: Faculty Document',
+        scenarioType: 'benign',
+        title: 'Course Instructor Societal Project Template',
+        renderMockup: () => `
+          <div class="email-window">
+            <div class="email-topbar">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>Outlook Web · BMSIT Faculty Portal</span>
+              </div>
+              <span style="font-family: monospace; font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;">INBOX</span>
+            </div>
+
+            <div class="email-body-pad">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #edebe9; padding-bottom: 14px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <div style="width: 44px; height: 44px; border-radius: 50%; background: #0078d4; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                    EP
+                  </div>
+                  <div>
+                    <div style="font-weight: 600; font-size: 14.5px; color: #201f1e;">Prof. Ester Prescilla E</div>
+                    <div style="font-size: 12px; color: #605e5c;">ester.prescilla@bmsit.in</div>
+                  </div>
+                </div>
+                <div style="font-size: 11.5px; color: #a19f9d; font-family: monospace;">Today, 11:40</div>
+              </div>
+
+              <div style="font-size: 15.5px; font-weight: 600; color: #201f1e; margin-bottom: 12px;">
+                1BSOP308 Societal Project: Phase 2 Evaluation Document Template
+              </div>
+
+              <div style="font-size: 13px; color: #323130; line-height: 1.55; margin-bottom: 18px;">
+                Dear Batch 10 and 6th Semester students: please find attached the verified departmental evaluation report template for your upcoming societal project review. Ensure compliance with IEEE formatting guidelines.
+              </div>
+
+              <div style="border: 1px solid #dadce0; border-radius: 8px; padding: 12px 16px; background: #faf9f8; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; background: #0078d4; color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+                    W
+                  </div>
+                  <div>
+                    <div style="font-size: 13.5px; font-weight: 600; color: #201f1e;">1BSOP308_Societal_Project_Phase2_Template.docx</div>
+                    <div style="font-size: 11.5px; color: #605e5c;">480 KB</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="outlook-action-strip">
+                <button type="button" class="outlook-btn-primary" id="btn-act-safe" onclick="triggerInstinctAction('safe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download Attachment
+                </button>
+                <button type="button" class="outlook-btn-secondary" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  Report as Junk / Spam
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          safe: {
+            label: 'DOWNLOAD ATTACHMENT',
+            isSafe: true,
+            prompt: 'You downloaded the course template. What verified its safety?',
+            reasons: [
+              { text: 'A) Originates from the authentic course guide faculty address (`ester.prescilla@bmsit.in`) with a clean single `.docx` extension matching scheduled project reviews.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I download all faculty files indiscriminately.', isCorrect: false, trap: 'Blind Trust' }
+            ]
+          },
+          unsafe: {
+            label: 'REPORT AS JUNK / SPAM',
+            isSafe: false,
+            prompt: 'You reported this email as junk/spam. Why?',
+            reasons: [
+              { text: 'A) False Positive Paranoia: I marked an authentic faculty email as spam, blocking official evaluation rubrics.', isCorrect: false, trap: 'False Positive Paranoia (Operational Disruption)' },
+              { text: 'B) I was in a rush and clicked report.', isCorrect: false, trap: 'Careless Triage' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'post-5',
+        threatClass: 'Browser Extension: High-Privilege API',
+        scenarioType: 'malicious',
+        title: 'Campus Proxy & Lab Unblocker Extension',
+        renderMockup: () => `
+          <div class="oauth-window">
+            <div class="oauth-browser-bar">
+              <div style="display: flex; gap: 6px; margin-right: 8px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff5f56;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #27c93f;"></div>
+              </div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#0b57d0"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-7 2.5a2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5 2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5z"/></svg>
+              <span style="color: #202124; font-weight: 500;">chromewebstore.google.com</span>/detail/campus-proxy-vip
+            </div>
+
+            <div class="oauth-content">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 48px; height: 48px; border-radius: 10px; background: #0b57d0; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800;">
+                  VPN
+                </div>
+                <div>
+                  <div style="font-size: 17px; font-weight: 600; color: #202124;">Campus High-Speed Proxy & Lab Unblocker</div>
+                  <div style="font-size: 12px; color: #5f6368;">Offered by: FreeCampusProxy · 3,100+ users</div>
+                </div>
+              </div>
+
+              <div style="padding: 14px 16px; background: #f8f9fa; border: 1px solid #dadce0; border-radius: 10px; margin-bottom: 18px;">
+                <div style="font-size: 12.5px; color: #5f6368; font-weight: 600; margin-bottom: 6px;">Permissions requested:</div>
+                <div style="font-size: 12.5px; color: #202124; line-height: 1.6;">
+                  • Read and change all your data on all websites you visit<br/>
+                  • Intercept network requests, web traffic, and manage your downloads
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="gpay-btn-decline" id="btn-act-safe" onclick="triggerInstinctAction('safe')"
+                  style="width: auto; padding: 0 20px; height: 38px; border-radius: 4px;">
+                  Cancel
+                </button>
+                <button type="button" class="gpay-btn-authorize" id="btn-act-unsafe" onclick="triggerInstinctAction('unsafe')"
+                  style="width: auto; padding: 0 22px; height: 38px; border-radius: 4px; box-shadow: none;">
+                  Add to Chrome
+                </button>
+              </div>
+            </div>
+          </div>
+        `,
+        actions: {
+          unsafe: {
+            label: 'ADD TO CHROME',
+            isSafe: false,
+            prompt: 'You added the proxy extension. What led to this decision?',
+            reasons: [
+              { text: 'A) I wanted to bypass campus firewall restrictions for high-speed downloads.', isCorrect: false, trap: 'Circumvention Risk' },
+              { text: 'B) I assumed Chrome Web Store extensions are always completely vetted.', isCorrect: false, trap: 'Implicit Store Trust' }
+            ]
+          },
+          safe: {
+            label: 'CANCEL',
+            isSafe: true,
+            prompt: 'You cancelled the extension. What technical rationale guided you?',
+            reasons: [
+              { text: 'A) Permitting a third-party extension to "read and modify all web data and intercept network traffic" creates a Man-in-the-Middle (MitM) risk exposing all unencrypted and session traffic.', isCorrect: true, trap: 'Calibrated Triage Mastery' },
+              { text: 'B) I already have another proxy installed.', isCorrect: false, trap: 'Lucky Guess' }
+            ]
+          }
+        }
+      }
+    ];
+
+    // Session State
+    let currentView = 'onboarding';
+    let currentPhase = 'pre';
+    let currentScenarioIdx = 0;
+    
+    let chosenInstinctAction = null;
+    let chosenReasonIdx = null;
+    let chosenCertaintyTier = null;
+    let scenarioStartTime = null;
+    let stopwatchTimer = null;
+    const sessionLog = { pre: [], post: [], tabDefocusCount: 0 };
+
+    window.addEventListener('keydown', (e) => {
+      if (currentView !== 'eval') return;
+      if (e.key === '1') selectCertainty(1);
+      if (e.key === '2') selectCertainty(2);
+      if (e.key === '3') selectCertainty(3);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden' && currentView === 'video') {
+        sessionLog.tabDefocusCount++;
+        document.getElementById('video-defocus-alert').style.display = 'flex';
+        audio.alert();
+      }
+    });
+
+    function resumeVideoFocus() {
+      audio.click();
+      document.getElementById('video-defocus-alert').style.display = 'none';
+    }
+
+    // Department Branch & Section Matrix
+    const branchSectionMap = {
+      'CSE': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'],
+      'CSBS': ['A', 'B'],
+      'AIML': ['A', 'B', 'C', 'D', 'E', 'F'],
+      'ECE': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'],
+      'EEE': ['A', 'B']
+    };
+
+    function updateSectionOptions() {
+      const branchSelect = document.getElementById('input-branch');
+      const sectionSelect = document.getElementById('input-section');
+      const selectedBranch = branchSelect.value;
+
+      sectionSelect.innerHTML = '<option value="" disabled selected>Select Section</option>';
+      
+      if (branchSectionMap[selectedBranch]) {
+        sectionSelect.disabled = false;
+        branchSectionMap[selectedBranch].forEach(sec => {
+          const opt = document.createElement('option');
+          opt.value = sec;
+          opt.textContent = `Section ${sec}`;
+          sectionSelect.appendChild(opt);
+        });
+      } else {
+        sectionSelect.disabled = true;
+      }
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('is-active'));
+      const el = document.getElementById(`view-${viewId}`);
+      if (el) el.classList.add('is-active');
+      currentView = viewId;
+      window.scrollTo(0, 0);
+    }
+
+    let candidate = { name: '', branch: '', section: '', fullSection: '' };
+
+    function handleStart(e) {
+      e.preventDefault();
+      audio.click();
+      candidate.name = document.getElementById('input-name').value.trim();
+      candidate.branch = document.getElementById('input-branch').value;
+      candidate.section = document.getElementById('input-section').value;
+      candidate.fullSection = `${candidate.branch}-${candidate.section}`;
+
+      document.getElementById('active-candidate-tag').style.display = 'inline-flex';
+      document.getElementById('tag-name').innerText = candidate.name.split(' ')[0].toUpperCase();
+      document.getElementById('tag-sec').innerText = candidate.fullSection;
+
+      currentPhase = 'pre';
+      currentScenarioIdx = 0;
+      switchView('eval');
+      renderScenario();
+    }
+
+    function renderScenario() {
+      const scenarios = currentPhase === 'pre' ? preScenarios : postScenarios;
+      const s = scenarios[currentScenarioIdx];
+
+      document.getElementById('eval-phase-title').innerText = currentPhase === 'pre'
+        ? 'Phase 1: Initial Assessment (Pre-Training)'
+        : 'Phase 2: Post-Training Assessment';
+      document.getElementById('eval-step-tag').innerText = `Scenario ${currentScenarioIdx + 1} of ${scenarios.length}`;
+      document.getElementById('eval-threat-class').innerText = `Scenario ${currentScenarioIdx + 1}`;
+      document.getElementById('eval-scenario-heading').innerText = s.title;
+
+      // Render the super-realistic phone / browser / email mockup
+      document.getElementById('eval-mockup-container').innerHTML = s.renderMockup();
+
+      // Reset two-phase selection state
+      chosenInstinctAction = null;
+      chosenReasonIdx = null;
+      chosenCertaintyTier = null;
+      document.getElementById('eval-reasoning-box').style.display = 'none';
+      resetCBMCells();
+      document.getElementById('btn-confirm-step').disabled = true;
+
+      scenarioStartTime = Date.now();
+      startStopwatch();
+    }
+
+    function startStopwatch() {
+      if (stopwatchTimer) clearInterval(stopwatchTimer);
+      const el = document.getElementById('eval-stopwatch');
+      stopwatchTimer = setInterval(() => {
+        const elapsed = (Date.now() - scenarioStartTime) / 1000;
+        const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+        const secs = (elapsed % 60).toFixed(2).padStart(5, '0');
+        el.innerText = `${mins}:${secs}`;
+      }, 50);
+    }
+
+    // Step 1: User interacts directly with the button on the realistic screen
+    function triggerInstinctAction(actionType) {
+      audio.click();
+      chosenInstinctAction = actionType;
+
+      const btnUnsafe = document.getElementById('btn-act-unsafe');
+      const btnSafe = document.getElementById('btn-act-safe');
+      if (btnUnsafe && btnSafe) {
+        btnUnsafe.classList.remove('is-active');
+        btnSafe.classList.remove('is-active');
+        if (actionType === 'unsafe') btnUnsafe.classList.add('is-active');
+        if (actionType === 'safe') btnSafe.classList.add('is-active');
+      }
+
+      // Reveal Step 2: Cognitive Reasoning Probe
+      const scenarios = currentPhase === 'pre' ? preScenarios : postScenarios;
+      const s = scenarios[currentScenarioIdx];
+      const branch = s.actions[actionType];
+
+      const box = document.getElementById('eval-reasoning-box');
+      box.style.display = 'block';
+      document.getElementById('eval-reasoning-prompt').innerText = branch.prompt;
+
+      const list = document.getElementById('eval-reasoning-list');
+      list.innerHTML = '';
+      chosenReasonIdx = null;
+
+      branch.reasons.forEach((r, idx) => {
+        const row = document.createElement('div');
+        row.className = 'reason-row';
+        row.innerHTML = `<span class="font-mono text-cyan-400 font-bold">${String.fromCharCode(65 + idx)})</span> <span>${r.text}</span>`;
+        row.onclick = () => selectReason(idx, row);
+        list.appendChild(row);
+      });
+
+      checkReady();
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function selectReason(idx, el) {
+      audio.click();
+      chosenReasonIdx = idx;
+      document.querySelectorAll('.reason-row').forEach(r => r.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      checkReady();
+    }
+
+    function selectCertainty(tier) {
+      audio.click();
+      chosenCertaintyTier = tier;
+      resetCBMCells();
+      document.getElementById(`cbm-${tier}`).classList.add('is-selected');
+      checkReady();
+    }
+
+    function resetCBMCells() {
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById(`cbm-${i}`).classList.remove('is-selected');
+      }
+    }
+
+    function checkReady() {
+      const ready = (chosenInstinctAction !== null && chosenReasonIdx !== null && chosenCertaintyTier !== null);
+      document.getElementById('btn-confirm-step').disabled = !ready;
+    }
+
+    // Step 3: Confirmation and Telemetry Recording
+    function submitScenarioStep() {
+      clearInterval(stopwatchTimer);
+      const scenarios = currentPhase === 'pre' ? preScenarios : postScenarios;
+      const s = scenarios[currentScenarioIdx];
+      const latencySec = (Date.now() - scenarioStartTime) / 1000;
+
+      const isSafeAction = (chosenInstinctAction === 'safe');
+      const branch = s.actions[chosenInstinctAction];
+      const selectedReason = branch.reasons[chosenReasonIdx];
+      const isValidReason = selectedReason.isCorrect;
+
+      const isCalibratedMastery = isSafeAction && isValidReason;
+      const isLuckyGuess = isSafeAction && !isValidReason;
+      const isBreach = !isSafeAction && s.scenarioType === 'malicious';
+      const isFalseAlarm = !isSafeAction && s.scenarioType === 'benign';
+
+      // Epistemic Calibration Scoring:
+      // 1. Calibrated Mastery (Safe + Valid Reason): +1, +2, +3
+      // 2. Lucky Guess (Safe + Invalid Reason): 0 points (chance-based gaming eliminated!)
+      // 3. Breach (Malicious trap triggered): -1, -2, -6
+      // 4. False Alarm (Benign college task blocked): -1, -2, -4
+      let points = 0;
+      let confidentError = false;
+
+      if (isCalibratedMastery) {
+        points = chosenCertaintyTier;
+      } else if (isLuckyGuess) {
+        points = 0; // ZERO credit awarded for uncalibrated lucky guesses!
+      } else if (isBreach) {
+        if (chosenCertaintyTier === 1) points = -1;
+        if (chosenCertaintyTier === 2) points = -2;
+        if (chosenCertaintyTier === 3) {
+          points = -6;
+          confidentError = true;
+        }
+      } else if (isFalseAlarm) {
+        if (chosenCertaintyTier === 1) points = -1;
+        if (chosenCertaintyTier === 2) points = -2;
+        if (chosenCertaintyTier === 3) {
+          points = -4;
+          confidentError = true;
+        }
+      }
+
+      const cognitiveState = isCalibratedMastery
+        ? 'CALIBRATED_MASTERY'
+        : isLuckyGuess
+        ? 'LUCKY_GUESS'
+        : isBreach
+        ? 'HAZARDOUS_COMPROMISE'
+        : 'FALSE_ALARM_PARANOIA';
+
+      sessionLog[currentPhase].push({
+        id: s.id,
+        title: s.title,
+        scenarioType: s.scenarioType || 'malicious',
+        threatClass: s.threatClass,
+        actionChosen: branch.label,
+        reasonChosen: selectedReason.text,
+        isSafe: isSafeAction,
+        isValidReason: isValidReason,
+        isCalibratedMastery: isCalibratedMastery,
+        isLuckyGuess: isLuckyGuess,
+        isBreach: isBreach,
+        isFalseAlarm: isFalseAlarm,
+        cognitiveState: cognitiveState,
+        trapCategory: selectedReason.trap || 'None',
+        tier: chosenCertaintyTier,
+        points: points,
+        latency: latencySec,
+        confidentError: confidentError
+      });
+
+      audio.success();
+      currentScenarioIdx++;
+
+      if (currentScenarioIdx < scenarios.length) {
+        renderScenario();
+      } else {
+        if (currentPhase === 'pre') {
+          switchView('video');
+          startVideoIntervention();
+        } else {
+          switchView('results');
+          renderResults();
+        }
+      }
+    }
+
+    function startVideoIntervention() {
+      setTimeout(() => {
+        document.getElementById('video-gate-modal').style.display = 'flex';
+        audio.alert();
+      }, 1400);
+    }
+
+    function answerGate(isCorrect) {
+      audio.click();
+      document.getElementById('video-gate-modal').style.display = 'none';
+      document.getElementById('video-prog').style.width = '100%';
+      document.getElementById('video-timer').innerText = '03:00 / 03:00 (VERIFIED)';
+    }
+
+    function finishVideo() {
+      audio.click();
+      currentPhase = 'post';
+      currentScenarioIdx = 0;
+      switchView('eval');
+      renderScenario();
+    }
+
+    // =========================================================
+    // TRON THEMED CYBER VECTOR EMOJI PACK
+    // =========================================================
+    const TronEmoji = {
+      // 1. Harmonic Identity Disc (Safe & Verified / Calibrated Mastery)
+      verified: `<span class="tron-glyph tron-emerald"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6" stroke-dasharray="8 2.5"/><circle cx="12" cy="12" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 12.2l2.8 2.8 5.4-5.4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`,
+
+      // 2. Grid Anomaly Core (Replaces Danger Triangle! NO TRIANGLES, NO EXCLAMATION MARKS)
+      anomaly: `<span class="tron-glyph tron-amber"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L19 9h-4.5L12 6.5 9.5 9H5L12 2z" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 11l4.5 4.5h4L14 13h5.5l-3 3H12l-4.5 4.5L3 16v-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><line x1="2" y1="10" x2="8" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="14" x2="22" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/></svg></span>`,
+
+      // 3. Laser Breach Node (Security Breach / Compromise)
+      breach: `<span class="tron-glyph tron-crimson"><svg viewBox="0 0 24 24" fill="none"><path d="M7 2h10l5 5v10l-5 5H7l-5-5V7l5-5z" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 2"/><path d="M8 8l8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 8l-8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="12" r="1.5" fill="#fff"/><circle cx="5" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/></svg></span>`,
+
+      // 4. Honeycomb Energy Aegis (Legitimate Request / Protection)
+      shield: `<span class="tron-glyph tron-cyan"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L3 6.5v7c0 5 4 8.5 9 10 5-1.5 9-5 9-10v-7L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 6l4 2.5v4.5L12 15.5 8 13V8.5L12 6z" stroke="currentColor" stroke-width="1.3" fill="currentColor" fill-opacity="0.15"/><circle cx="12" cy="10.8" r="1.8" fill="currentColor"/></svg></span>`,
+
+      // 5. Dual-Track Identity Disc (Dual-Trial Consistent Mastery)
+      disc: `<span class="tron-glyph tron-emerald"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><rect x="11" y="0.8" width="2" height="3" rx="0.5" fill="currentColor"/><rect x="11" y="20.2" width="2" height="3" rx="0.5" fill="currentColor"/><rect x="0.8" y="11" width="3" height="2" rx="0.5" fill="currentColor"/><rect x="20.2" y="11" width="3" height="2" rx="0.5" fill="currentColor"/></svg></span>`,
+
+      // 6. Tactical HUD Reticle (Learned Key Indicator / Precision Clue)
+      reticle: `<span class="tron-glyph tron-cyan"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.4"/><line x1="12" y1="3" x2="12" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="18" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="12" x2="6" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg></span>`,
+
+      // 7. Lightcycle Overdrive (Fast Learner / High Improvement)
+      velocity: `<span class="tron-glyph tron-cyan"><svg viewBox="0 0 24 24" fill="none"><path d="M4 18l8-7 8 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 13l6-5.5 6 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 8l4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>`,
+
+      // 8. Quantum Tesseract (Lucky Guess / 4D Heuristic Node)
+      cube: `<span class="tron-glyph tron-amber"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="8" y="8" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.4" fill="currentColor" fill-opacity="0.2"/><line x1="3" y1="3" x2="8" y2="8" stroke="currentColor" stroke-width="1.4"/><line x1="21" y1="3" x2="16" y2="8" stroke="currentColor" stroke-width="1.4"/><line x1="3" y1="21" x2="8" y2="16" stroke="currentColor" stroke-width="1.4"/><line x1="21" y1="21" x2="16" y2="16" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></span>`,
+
+      // 9. Laser Gate Firewall (False Alarm / Overly Cautious)
+      firewall: `<span class="tron-glyph tron-purple"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="3.5" height="18" rx="1" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.2"/><rect x="17.5" y="3" width="3.5" height="18" rx="1" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.2"/><line x1="6.5" y1="7" x2="17.5" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2"/><line x1="6.5" y1="12" x2="17.5" y2="12" stroke="currentColor" stroke-width="2.5"/><line x1="6.5" y1="17" x2="17.5" y2="17" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2"/><circle cx="12" cy="12" r="2" fill="#fff"/></svg></span>`,
+
+      // 10. Neural Logic Conduit (Rule of Thumb / Educational Directive)
+      directive: `<span class="tron-glyph tron-cyan"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4l6 8-6 8-6-8 6-8z" stroke="currentColor" stroke-width="1.8" fill="currentColor" fill-opacity="0.2"/><path d="M12 4V1M12 20v3M4 12H1M20 12h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="1" r="1" fill="currentColor"/><circle cx="12" cy="23" r="1" fill="currentColor"/><circle cx="1" cy="12" r="1" fill="currentColor"/><circle cx="23" cy="12" r="1" fill="currentColor"/></svg></span>`,
+
+      // 11. Quantum Singularity Core (Top Awareness / Sharp Defender)
+      star: `<span class="tron-glyph tron-emerald"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7.5" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.2 4.2l3.5 3.5M16.3 16.3l3.5 3.5M4.2 19.8l3.5-3.5M16.3 7.7l3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="#fff"/></svg></span>`
+    };
+    // Alias hazard to anomaly for backward compatibility
+    TronEmoji.anomaly = TronEmoji.anomaly;
+
+    function generatePersonalizedAdvice(sessionLog) {
+      const allTrials = [...sessionLog.pre, ...sessionLog.post];
+      const preTrials = sessionLog.pre;
+      const postTrials = sessionLog.post;
+
+      const luckyGuesses = allTrials.filter(t => t.isLuckyGuess);
+      const breaches = allTrials.filter(t => t.isBreach);
+      const falseAlarms = allTrials.filter(t => t.isFalseAlarm);
+      const calibratedMastery = allTrials.filter(t => t.isCalibratedMastery);
+      const confidentErrors = allTrials.filter(t => t.confidentError);
+
+      const preTotal = preTrials.reduce((a, c) => a + c.points, 0);
+      const postTotal = postTrials.reduce((a, c) => a + c.points, 0);
+      const overallScore = preTotal + postTotal;
+      const interventionDelta = postTotal - preTotal;
+
+      // 5 Realistic Threat Domains
+      const domains = [
+        {
+          id: 'fin-autopay',
+          name: 'Google Pay & UPI AutoPay Requests',
+          icon: 'fa-credit-card',
+          color: 'var(--cyber-crimson)',
+          preShort: 'Google Pay ₹3,000 grant mandate',
+          postShort: '₹480 order refund mandate',
+          scamTrick: 'using a ₹0.00 initial charge to disguise a monthly ₹15,000 / ₹5,000 deduction',
+          ruleOfThumb: 'Receiving money (grants, refunds, cashback) NEVER requires setting up an AutoPay mandate or entering your UPI PIN. If someone claims they are sending you money but asks you to authorize AutoPay, decline it immediately!'
+        },
+        {
+          id: 'oauth-scope',
+          name: 'Google Sign-In & Student Portal Permissions',
+          icon: 'fa-id-badge',
+          color: 'var(--cyber-cyan)',
+          preShort: 'BMSIT Exam Portal Sign-in',
+          postShort: 'IEEE Research Portal Sign-in',
+          scamTrick: 'fake sign-in popups asking to read your personal Google Drive files or emails',
+          ruleOfThumb: 'Check what permissions the popup asks for. If a student portal only needs your basic name and email to log you in, it is completely safe. If it asks for permission to read or delete your Google Drive files, do NOT approve it!'
+        },
+        {
+          id: 'payload-mimicry',
+          name: 'Disguised Attachments (.xlsx.lnk / .pdf.exe)',
+          icon: 'fa-file-shield',
+          color: 'var(--cyber-crimson)',
+          preShort: 'Placement shortlist (.xlsx.lnk shortcut)',
+          postShort: 'DBMS Lab solution (.pdf.exe executable)',
+          scamTrick: 'disguising an executable program or shortcut with a fake Excel or PDF icon',
+          ruleOfThumb: 'Never judge a file by its icon! Scammers put Excel or PDF icons on executable program files. Always check the very end of the filename—if it ends in .lnk or .exe, it is a program that can install malware on your laptop.'
+        },
+        {
+          id: 'faculty-signal',
+          name: 'Official College Emails vs. Suspicious Messages',
+          icon: 'fa-envelope-circle-check',
+          color: '#c084fc',
+          preShort: 'Official campus recruitment PDF',
+          postShort: 'Faculty societal project guide DOCX',
+          scamTrick: 'missing real opportunities by panicking and blocking authentic faculty emails',
+          ruleOfThumb: 'Good cybersecurity is about being smart, not blocking everything! If an email comes from a verified college address (@bmsit.in) with a standard document (.pdf or .docx), it is safe to open.'
+        },
+        {
+          id: 'ext-privilege',
+          name: 'Browser Extensions & Elevated Permissions',
+          icon: 'fa-puzzle-piece',
+          color: 'var(--cyber-crimson)',
+          preShort: 'VTU calculator asking to read all website data',
+          postShort: 'Campus proxy asking to intercept all web traffic',
+          scamTrick: 'installing innocent-looking extensions that secretly record your passwords and browser tabs',
+          ruleOfThumb: 'A simple calculator or proxy never needs permission to "read and change all your data on all websites you visit". Always read the permission box before clicking Add to Chrome!'
+        }
+      ];
+
+      // Friendly Operator Badge Classification
+      let badgeClass = 'border-amber-500 bg-amber-500/10 text-amber-400';
+      let badgeLabel = 'TACTICAL DEFENDER';
+      let badgeIcon = 'fa-shield-halved';
+      let summaryText = 'You have good security instincts, but sometimes fell for tricky wording or guessed without checking the technical details.';
+
+      if (calibratedMastery.length >= 8 && breaches.length === 0 && falseAlarms.length === 0) {
+        badgeClass = 'border-emerald-500 bg-emerald-500/10 text-emerald-400';
+        badgeLabel = `${TronEmoji.star} Sharp Defender (Top Awareness)`;
+        badgeIcon = 'fa-award';
+        summaryText = 'Outstanding job! You spotted every deceptive trick, verified all legitimate emails, and backed every single decision with the correct reason.';
+      } else if (interventionDelta >= 6 && postTotal >= 11) {
+        badgeClass = 'border-emerald-400 bg-emerald-400/10 text-emerald-300';
+        badgeLabel = `${TronEmoji.velocity} Fast Learner (High Improvement)`;
+        badgeIcon = 'fa-arrow-trend-up';
+        summaryText = 'Impressive progress! You fell for a few tricks in the first test, but after watching the short guide, your score jumped significantly and you caught almost every scam in the post-test.';
+      } else if (luckyGuesses.length >= 3) {
+        badgeClass = 'border-cyan-500 bg-cyan-500/10 text-cyan-400';
+        badgeLabel = `${TronEmoji.cube} Intuitive Guesser (Needs Verification)`;
+        badgeIcon = 'fa-dice';
+        summaryText = 'You picked the safe button several times, but admitted you were just guessing or doing it by personal preference. Checking specific clues (like file names and mandate terms) will make your defense rock solid!';
+      } else if (falseAlarms.length >= 2) {
+        badgeClass = 'border-purple-500 bg-purple-500/10 text-purple-400';
+        badgeLabel = `${TronEmoji.firewall} Overly Cautious (Blocked Safe Items)`;
+        badgeIcon = 'fa-bell-slash';
+        summaryText = 'You were so worried about scams that you accidentally blocked safe college sign-ins and authentic teacher emails! Remember: check the sender domain (@bmsit.in) before hitting report.';
+      } else if (breaches.length >= 3 || confidentErrors.length >= 2) {
+        badgeClass = 'border-rose-500 bg-rose-500/10 text-rose-400';
+        badgeLabel = `${TronEmoji.anomaly} High Risk (Vulnerable to Deceptive Traps)`;
+        badgeIcon = 'fa-bug';
+        summaryText = 'You fell for multiple disguised attacks with high confidence. Review the tips below carefully so you do not lose money or compromise your laptop in real life.';
+      }
+
+      // Generate 5 Easy-to-Understand Domain Review Cards
+      let domainCardsHtml = '';
+      domains.forEach((dom, i) => {
+        const pre = preTrials[i];
+        const post = postTrials[i];
+        if (!pre || !post) return;
+
+        const delta = post.points - pre.points;
+        const deltaStr = delta > 0 ? `+${delta}` : `${delta}`;
+        const deltaColor = delta > 0 ? 'var(--cyber-emerald)' : delta < 0 ? 'var(--cyber-crimson)' : 'var(--text-muted)';
+
+        let cardBorder = 'vuln';
+        let trajectoryBadge = '';
+        let trajectoryClass = 'text-amber-400 border-amber-500/40 bg-amber-500/10';
+        let narrative = '';
+
+        // Clean, human, easy-to-understand explanations
+        if (pre.isBreach && post.isCalibratedMastery) {
+          cardBorder = 'remediated';
+          trajectoryBadge = `${TronEmoji.verified} Great Improvement (+${delta} Pts)`;
+          trajectoryClass = 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
+          narrative = `In the first test, you were vulnerable to this trick because you chose to <strong>${pre.actionChosen}</strong>, thinking: <em>"${pre.reasonChosen}"</em>. It\'s easy to see why—scammers make the first step look free or urgent! But our post-test results show that you\'ve improved in detecting this trap: when faced with the <strong>${dom.postShort}</strong>, you safely chose to <strong>${post.actionChosen}</strong> because you knew: <em>"${post.reasonChosen}"</em>. You learned the real indicator and won\'t fall for ${dom.scamTrick} again!`;
+        } else if (pre.isLuckyGuess && post.isCalibratedMastery) {
+          cardBorder = 'remediated';
+          trajectoryBadge = `${TronEmoji.reticle} Learned Key Indicator (+${delta} Pts)`;
+          trajectoryClass = 'text-cyan-400 border-cyan-500/40 bg-cyan-500/10';
+          narrative = `In the first test, you avoided this danger, but admitted it was just a coincidence or lucky guess (<em>"${pre.reasonChosen}"</em>, 0 points awarded). In the post-test, you showed genuine skill: you chose to <strong>${post.actionChosen}</strong> because you actually spotted the technical reason: <em>"${post.reasonChosen}"</em>. You\'ve moved from lucky guessing to true digital awareness!`;
+        } else if (pre.isCalibratedMastery && post.isCalibratedMastery) {
+          cardBorder = 'mastery';
+          trajectoryBadge = `${TronEmoji.disc} Spot On in Both Tests (+${pre.points + post.points} Pts)`;
+          trajectoryClass = 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
+          narrative = `You handled this like a pro in both tests! You immediately spotted the right clues, made the safe decision with high confidence, and backed it up with the exact technical reason. You\'re completely safe in this area.`;
+        } else if (pre.isBreach && post.isBreach) {
+          cardBorder = 'vuln';
+          trajectoryBadge = `${TronEmoji.anomaly} Vulnerable to This Trap`;
+          trajectoryClass = 'text-rose-400 border-rose-500/40 bg-rose-500/10';
+          narrative = `You were tricked in both the first test and the second test. In both cases, you authorized the request thinking: <em>"${post.reasonChosen}"</em>. Remember: scammers count on you rushing or looking only at the superficial headline. Check the golden rule below!`;
+        } else if (pre.isFalseAlarm && post.isCalibratedMastery) {
+          cardBorder = 'remediated';
+          trajectoryBadge = `${TronEmoji.verified} Learned to Trust Safe Items (+${delta} Pts)`;
+          trajectoryClass = 'text-purple-400 border-purple-500/40 bg-purple-500/10';
+          narrative = `In the first test, you panicked and blocked a safe college notification (<em>"${pre.reasonChosen}"</em>). After the guide, you learned to check for the verified <code>@bmsit.in</code> college domain and normal file extensions, and safely approved the request without causing accidental disruption!`;
+        } else if (post.isFalseAlarm) {
+          cardBorder = 'paranoia';
+          trajectoryBadge = `${TronEmoji.firewall} False Alarm (Blocked Safe Task)`;
+          trajectoryClass = 'text-purple-400 border-purple-500/40 bg-purple-500/10';
+          narrative = `You were a little too suspicious here and blocked <strong>${post.title}</strong>, thinking: <em>"${post.reasonChosen}"</em>. While being cautious is great, blocking verified teacher emails or safe college sign-ins can cause you to miss exam schedules or project files!`;
+        } else if (post.isLuckyGuess) {
+          cardBorder = 'lucky';
+          trajectoryBadge = `${TronEmoji.cube} Lucky Guess (0 Pts Awarded)`;
+          trajectoryClass = 'text-amber-400 border-amber-500/40 bg-amber-500/10';
+          narrative = `You clicked the safe button for <strong>${post.title}</strong>, but your reason was just personal preference or coincidence (<em>"${post.reasonChosen}"</em>). We awarded 0 points for this to prevent guessing. Focus on the real technical clue in the rule below!`;
+        } else {
+          cardBorder = 'vuln';
+          trajectoryBadge = 'NEEDS ATTENTION';
+          narrative = `Your decision shifted without checking the key security indicator. Review the rule of thumb below to master this scenario.`;
+        }
+
+        domainCardsHtml += `
+          <div class="advisory-card ${cardBorder}">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                  <span class="hud-tag" style="color: ${dom.color}; margin-bottom: 0;">
+                    <i class="fa-solid ${dom.icon} mr-1"></i> Topic ${i+1}: ${dom.name}
+                  </span>
+                </div>
+                <div style="font-size: 1rem; color: #fff; font-weight: 700;">
+                  ${dom.name}
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span class="telemetry-chip" style="color: ${deltaColor}; border-color: ${deltaColor}; font-weight: 700;">
+                  Score: ${deltaStr} pts
+                </span>
+                <span class="telemetry-chip ${trajectoryClass}">
+                  ${trajectoryBadge}
+                </span>
+              </div>
+            </div>
+
+            <div style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 10px;">
+              ${narrative}
+            </div>
+
+            <div class="advisory-directive">
+              <strong>${TronEmoji.directive} Rule of thumb:</strong> ${dom.ruleOfThumb}
+            </div>
+          </div>
+        `;
+      });
+
+      // Clear, readable Per-Question Breakdown Table
+      let auditRowsHtml = '';
+      const renderAuditRow = (trial, phaseName, idx) => {
+        const isMastery = trial.isCalibratedMastery;
+        const isLucky = trial.isLuckyGuess;
+        const isBreach = trial.isBreach;
+        const isParanoia = trial.isFalseAlarm;
+
+        const resultLabel = isMastery ? `${TronEmoji.verified} Safe & Verified` : isLucky ? `${TronEmoji.cube} Lucky Guess (0 pts)` : isBreach ? `${TronEmoji.breach} Fell for Trap` : `${TronEmoji.firewall} Blocked Safe Item`;
+        const stateColor = isMastery ? 'var(--cyber-emerald)' : isLucky ? 'var(--cyber-amber)' : isBreach ? 'var(--cyber-crimson)' : '#c084fc';
+        const stateBg = isMastery ? 'rgba(16,185,129,0.1)' : isLucky ? 'rgba(245,158,11,0.1)' : isBreach ? 'rgba(244,63,94,0.1)' : 'rgba(192,132,252,0.1)';
+        const ptsColor = trial.points > 0 ? 'var(--cyber-emerald)' : trial.points === 0 ? 'var(--cyber-amber)' : 'var(--cyber-crimson)';
+        const ptsSign = trial.points > 0 ? `+${trial.points}` : `${trial.points}`;
+
+        // Clean title
+        const cleanTitle = trial.title.replace('GOOGLE PAY UPI AUTOPAY E-MANDATE AUTHORIZATION', 'Google Pay AutoPay Mandate')
+          .replace('BMSIT EXAMINATION & FEEDBACK PORTAL SIGN-IN', 'BMSIT Exam Portal Google Sign-In')
+          .replace('PLACEMENT CELL SHORTLIST ADVISORY ATTACHMENT', 'Placement Shortlist Email (.xlsx.lnk)')
+          .replace('OFFICIAL CAMPUS RECRUITMENT TEST INSTRUCTIONS', 'Campus Recruitment Email (.pdf)')
+          .replace('VTU RESULT & SGPA CALCULATOR EXTENSION', 'VTU Calculator Chrome Extension')
+          .replace('PHONEPE / GPAY ORDER REFUND MANDATE', 'GPay Order Refund Mandate')
+          .replace('IEEE STUDENT BRANCH RESEARCH PORTAL ACCESS', 'IEEE Portal Google Sign-In')
+          .replace('SHARED ACADEMIC ARCHIVE DOWNLOAD', 'DBMS Lab Manual Download (.pdf.exe)')
+          .replace('COURSE INSTRUCTOR SOCIETAL PROJECT TEMPLATE', 'Faculty Project Template Email (.docx)')
+          .replace('CAMPUS PROXY & LAB UNBLOCKER EXTENSION', 'Campus Proxy Chrome Extension');
+
+        return `
+          <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.82rem;">
+            <td style="padding: 10px 12px; font-family: var(--font-mono); color: var(--cyber-cyan); font-weight: 700;">#${idx+1}</td>
+            <td style="padding: 10px 12px;">
+              <div style="font-weight: 600; color: #fff;">${cleanTitle}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">${trial.scenarioType === 'malicious' ? `${TronEmoji.anomaly} Deceptive Trap` : `${TronEmoji.shield} Legitimate Request`}</div>
+            </td>
+            <td style="padding: 10px 12px; font-family: var(--font-mono); color: #cbd5e1;">${trial.actionChosen}</td>
+            <td style="padding: 10px 12px; color: #94a3b8; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${trial.reasonChosen}">
+              ${trial.reasonChosen}
+            </td>
+            <td style="padding: 10px 12px; text-align: center; font-family: var(--font-mono); font-weight: 700; color: #fff;">Tier ${trial.tier}</td>
+            <td style="padding: 10px 12px;">
+              <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; color: ${stateColor}; background: ${stateBg}; border: 1px solid ${stateColor};">
+                ${resultLabel}
+              </span>
+            </td>
+            <td style="padding: 10px 12px; font-family: var(--font-mono); text-align: right; color: #94a3b8;">${trial.latency.toFixed(1)}s</td>
+            <td style="padding: 10px 12px; font-family: var(--font-mono); text-align: right; font-weight: 800; font-size: 0.95rem; color: ${ptsColor};">
+              ${ptsSign}
+            </td>
+          </tr>
+        `;
+      };
+
+      preTrials.forEach((t, i) => { auditRowsHtml += renderAuditRow(t, 'PRE', i); });
+      auditRowsHtml += `
+        <tr style="background: rgba(244,63,94,0.08); font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; border-bottom: 2px solid var(--border-hud);">
+          <td colspan="7" style="padding: 10px 12px; color: var(--cyber-crimson); font-family: var(--font-sans); font-weight: 600;">Phase 1 (Pre-Test Before Training) Subtotal</td>
+          <td style="padding: 10px 12px; text-align: right; color: var(--cyber-crimson); font-size: 1.05rem;">${preTotal > 0 ? '+'+preTotal : preTotal} pts</td>
+        </tr>
+      `;
+      postTrials.forEach((t, i) => { auditRowsHtml += renderAuditRow(t, 'POST', i); });
+      auditRowsHtml += `
+        <tr style="background: rgba(16,185,129,0.08); font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; border-bottom: 2px solid var(--border-hud);">
+          <td colspan="7" style="padding: 10px 12px; color: var(--cyber-emerald); font-family: var(--font-sans); font-weight: 600;">Phase 2 (Post-Test After Training) Subtotal</td>
+          <td style="padding: 10px 12px; text-align: right; color: var(--cyber-emerald); font-size: 1.05rem;">${postTotal > 0 ? '+'+postTotal : postTotal} pts</td>
+        </tr>
+        <tr style="background: rgba(56,189,248,0.12); font-family: var(--font-mono); font-weight: 800; font-size: 0.92rem;">
+          <td colspan="7" style="padding: 12px 12px; color: #fff; font-family: var(--font-sans); font-weight: 700;">Total Overall Score (Sum of All 10 Trials)</td>
+          <td style="padding: 12px 12px; text-align: right; color: var(--cyber-cyan); font-size: 1.25rem;">${overallScore > 0 ? '+'+overallScore : overallScore} pts</td>
+        </tr>
+      `;
+
+      return `
+        <!-- Top Atlassian-Style Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-hud); padding-bottom: 14px;">
+          <div>
+            <div class="hud-tag" style="color: #579dff; margin-bottom: 4px;">
+              <i class="fa-solid fa-user-check mr-1"></i> Personalized Performance Analysis
+            </div>
+            <h2 style="font-family: var(--font-sans); font-size: 1.35rem; font-weight: 700; color: #fff; letter-spacing: -0.02em;">
+              How Your Decision-Making Improved
+            </h2>
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-sans); margin-top: 3px;">
+              A personalized comparison of how you responded before the training guide versus after:
+            </div>
+          </div>
+          <div class="badge-operator-tier ${badgeClass}" style="font-size: 0.88rem; padding: 6px 14px; text-transform: none; letter-spacing: normal;">
+            <i class="fa-solid ${badgeIcon} mr-1"></i> ${badgeLabel}
+          </div>
+        </div>
+
+        <!-- Student Summary Narrative -->
+        <div style="background: rgba(15,23,42,0.7); border: 1px solid var(--border-hud); border-radius: 10px; padding: 16px 18px; margin-bottom: 20px;">
+          <div style="font-size: 0.82rem; color: #579dff; font-family: var(--font-sans); font-weight: 600; margin-bottom: 6px;">
+            <i class="fa-solid fa-comment-dots mr-1"></i> Summary for ${candidate.name} (${candidate.fullSection || candidate.section})
+          </div>
+          <p style="font-size: 0.90rem; color: #e2e8f0; line-height: 1.6; margin-bottom: 10px;">
+            ${summaryText}
+          </p>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.80rem; font-family: var(--font-mono); color: var(--text-muted); padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+            <span>Score Jump: <strong style="color: ${interventionDelta >= 0 ? 'var(--cyber-emerald)' : 'var(--cyber-crimson)'};">${interventionDelta >= 0 ? '+' + interventionDelta : interventionDelta} points</strong></span>
+            <span>Confident Mistakes: <strong style="color: ${confidentErrors.length > 0 ? 'var(--cyber-crimson)' : 'var(--cyber-emerald)'};">${confidentErrors.length}</strong></span>
+            <span>Lucky Guesses Filtered: <strong style="color: var(--cyber-amber);">${luckyGuesses.length} (0 points)</strong></span>
+          </div>
+        </div>
+
+        <!-- Simple 4-Card Overview -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 24px;">
+          <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-hud); border-radius: 8px; padding: 14px 16px;">
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">Correct Decisions</div>
+            <div style="font-size: 1.65rem; font-weight: 800; color: var(--cyber-emerald); font-family: var(--font-mono);">${calibratedMastery.length} / 10</div>
+            <div style="font-size: 0.72rem; color: #94a3b8;">Safe action + correct reason</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-hud); border-radius: 8px; padding: 14px 16px;">
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">Lucky Guesses</div>
+            <div style="font-size: 1.65rem; font-weight: 800; color: var(--cyber-amber); font-family: var(--font-mono);">${luckyGuesses.length}</div>
+            <div style="font-size: 0.72rem; color: #94a3b8;">Right action, but guessed reason (0 pts)</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-hud); border-radius: 8px; padding: 14px 16px;">
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">Scams Fallen For</div>
+            <div style="font-size: 1.65rem; font-weight: 800; color: ${breaches.length > 0 ? 'var(--cyber-crimson)' : 'var(--cyber-emerald)'}; font-family: var(--font-mono);">${breaches.length} / 6</div>
+            <div style="font-size: 0.72rem; color: #94a3b8;">Deceptive traps triggered</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-hud); border-radius: 8px; padding: 14px 16px;">
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">Safe Emails Blocked</div>
+            <div style="font-size: 1.65rem; font-weight: 800; color: ${falseAlarms.length > 0 ? '#c084fc' : 'var(--cyber-emerald)'}; font-family: var(--font-mono);">${falseAlarms.length} / 4</div>
+            <div style="font-size: 0.72rem; color: #94a3b8;">Accidentally blocked legitimate tasks</div>
+          </div>
+        </div>
+
+        <!-- Domain by Domain Review Cards -->
+        <div style="margin-bottom: 28px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+            <div class="hud-tag" style="color: #579dff; margin-bottom: 0;">
+              <i class="fa-solid fa-graduation-cap mr-1"></i> Detailed Comparison: Before vs. After Training
+            </div>
+            <span style="font-size: 0.80rem; color: var(--text-muted); font-family: var(--font-sans);">5 Real-World Scenarios Evaluated</span>
+          </div>
+          <div>
+            ${domainCardsHtml}
+          </div>
+        </div>
+
+        <!-- Clear Per-Question Score Breakdown -->
+        <div style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+            <div class="hud-tag" style="color: #4bce97; margin-bottom: 0;">
+              <i class="fa-solid fa-list-check mr-1"></i> Detailed Per-Question Score Audit
+            </div>
+            <span style="font-size: 0.80rem; color: var(--text-muted); font-family: var(--font-sans);">Deterministic point calculation across all 10 evaluation trials</span>
+          </div>
+          <div style="overflow-x: auto; background: rgba(0,0,0,0.45); border: 1px solid var(--border-hud); border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 1px solid var(--border-hud); font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; background: rgba(255,255,255,0.02);">
+                  <th style="padding: 10px 12px;">#</th>
+                  <th style="padding: 10px 12px;">Scenario</th>
+                  <th style="padding: 10px 12px;">Your Action</th>
+                  <th style="padding: 10px 12px;">Your Reason</th>
+                  <th style="padding: 10px 12px; text-align: center;">Certainty</th>
+                  <th style="padding: 10px 12px;">Result</th>
+                  <th style="padding: 10px 12px; text-align: right;">Time</th>
+                  <th style="padding: 10px 12px; text-align: right;">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${auditRowsHtml}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function applyTronEmojiPack(root = document.body) {
+      // Auto-replaces any remaining unicode characters with glowing Tron vectors
+      const map = {
+        '\u{1F31F}': TronEmoji.star,
+        '\u{1F680}': TronEmoji.velocity,
+        '\u{1F3B2}': TronEmoji.cube,
+        '\u{1F6D1}': TronEmoji.firewall,
+        '\u26A0\uFE0F': TronEmoji.anomaly,
+        '\u26A0': TronEmoji.anomaly,
+        '\u2705': TronEmoji.verified,
+        '\u{1F3AF}': TronEmoji.reticle,
+        '\u{1F6E1}\uFE0F': TronEmoji.shield,
+        '\u{1F6E1}': TronEmoji.shield,
+        '\u{1F4A1}': TronEmoji.directive,
+        '\u274C': TronEmoji.breach
+      };
+      
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+      textNodes.forEach(node => {
+        let val = node.nodeValue;
+        let modified = false;
+        for (const [char, html] of Object.entries(map)) {
+          if (val.includes(char)) {
+            val = val.split(char).join(`__TRON_${encodeURIComponent(char)}__`);
+            modified = true;
+          }
+        }
+        if (modified) {
+          const span = document.createElement('span');
+          let inner = val;
+          for (const [char, html] of Object.entries(map)) {
+            inner = inner.split(`__TRON_${encodeURIComponent(char)}__`).join(html);
+          }
+          span.innerHTML = inner;
+          node.parentNode.replaceChild(span, node);
+        }
+      });
+    }
+
+    let chartInst = null;
+    function renderResults() {
+      document.getElementById('res-candidate-name').innerText = candidate.name.toUpperCase();
+      document.getElementById('res-candidate-sec').innerText = (candidate.fullSection || candidate.section).toUpperCase();
+
+      // Render Dynamic Personalized Advisory Dossier
+      const advBox = document.getElementById('res-advisory-container');
+      if (advBox) {
+        advBox.innerHTML = generatePersonalizedAdvice(sessionLog);
+        setTimeout(applyTronEmojiPack, 30);
+      }
+
+      const preTotal = sessionLog.pre.reduce((a, c) => a + c.points, 0);
+      const postTotal = sessionLog.post.reduce((a, c) => a + c.points, 0);
+      const preErrors = sessionLog.pre.filter(c => c.confidentError).length;
+      const postErrors = sessionLog.post.filter(c => c.confidentError).length;
+      const avgLat = (sessionLog.post.reduce((a, c) => a + c.latency, 0) / sessionLog.post.length).toFixed(1);
+
+      document.getElementById('kpi-pre').innerText = preTotal > 0 ? `+${preTotal}` : preTotal;
+      document.getElementById('kpi-post').innerText = postTotal > 0 ? `+${postTotal}` : postTotal;
+      document.getElementById('kpi-errors').innerText = `${preErrors - postErrors} Scams Caught`;
+      document.getElementById('kpi-latency').innerText = `${avgLat}s`;
+
+      const ctx = document.getElementById('matrixChart').getContext('2d');
+      if (chartInst) chartInst.destroy();
+
+      const prePoints = sessionLog.pre.map(p => ({ x: p.isCorrect ? 1 : 0, y: p.tier }));
+      const postPoints = sessionLog.post.map(p => ({ x: p.isCorrect ? 1 : 0, y: p.tier }));
+
+      chartInst = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Pre-Test Baseline Reflex',
+              data: prePoints,
+              backgroundColor: '#f43f5e',
+              borderColor: '#f43f5e',
+              pointRadius: 8,
+              borderWidth: 1
+            },
+            {
+              label: 'Post-Test Calibrated Triage',
+              data: postPoints,
+              backgroundColor: '#10b981',
+              borderColor: '#38bdf8',
+              pointRadius: 10,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              min: -0.2,
+              max: 1.2,
+              ticks: {
+                callback: v => v === 0 ? 'VULNERABLE (INCORRECT)' : v === 1 ? 'DEFENDED (CORRECT)' : '',
+                color: '#94a3b8',
+                font: { family: 'JetBrains Mono', size: 11, weight: '700' }
+              },
+              grid: { color: 'rgba(56, 189, 248, 0.12)' }
+            },
+            y: {
+              min: 0.5,
+              max: 3.5,
+              ticks: {
+                stepSize: 1,
+                callback: v => v === 1 ? 'TIER 1 (GUESS)' : v === 2 ? 'TIER 2 (PROBABLE)' : v === 3 ? 'TIER 3 (VERIFIED)' : '',
+                color: '#94a3b8',
+                font: { family: 'JetBrains Mono', size: 11, weight: '700' }
+              },
+              grid: { color: 'rgba(56, 189, 248, 0.12)' }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#ffffff', font: { family: 'JetBrains Mono', size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    function exportCSV() {
+      let csv = "data:text/csv;charset=utf-8,Operator_Name,Branch,Section,Phase,Threat_Vector,Scenario_Type,Action_Triggered,Reason_Chosen,Cognitive_State,Trap_Category,Is_Calibrated_Mastery,Is_Lucky_Guess,Certainty_Tier,CBM_Score,Reaction_Latency_Sec,Confident_Error_Flag\n";
+      sessionLog.pre.forEach(p => {
+        csv += `"${candidate.name}","${candidate.branch}","${candidate.section}","PRE","${p.title}","${p.scenarioType}","${p.actionChosen}","${(p.reasonChosen||'').replace(/"/g, '""')}","${p.cognitiveState}","${p.trapCategory}",${p.isCalibratedMastery},${p.isLuckyGuess},${p.tier},${p.points},${p.latency.toFixed(2)},${p.confidentError}\n`;
+      });
+      sessionLog.post.forEach(p => {
+        csv += `"${candidate.name}","${candidate.branch}","${candidate.section}","POST","${p.title}","${p.scenarioType}","${p.actionChosen}","${(p.reasonChosen||'').replace(/"/g, '""')}","${p.cognitiveState}","${p.trapCategory}",${p.isCalibratedMastery},${p.isLuckyGuess},${p.tier},${p.points},${p.latency.toFixed(2)},${p.confidentError}\n`;
+      });
+
+      const uri = encodeURI(csv);
+      const a = document.createElement('a');
+      a.href = uri;
+      a.download = `Cyber_SOS_${candidate.name.replace(/\s+/g, '_')}_AAR_Telemetry.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Automated test / direct preview hook
+    function checkTestHook() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('test') === 'eval') {
+        candidate = { name: 'Aditya Kumar', branch: 'CSE', section: 'B', fullSection: 'CSE-B' };
+        currentPhase = urlParams.get('phase') === 'post' ? 'post' : 'pre';
+        currentScenarioIdx = parseInt(urlParams.get('idx') || '0', 10);
+        document.getElementById('active-candidate-tag').style.display = 'inline-flex';
+        document.getElementById('tag-name').innerText = 'ADITYA';
+        document.getElementById('tag-sec').innerText = 'CSE-B';
+        switchView('eval');
+        renderScenario();
+        if (urlParams.get('action')) {
+          setTimeout(() => triggerInstinctAction(urlParams.get('action')), 150);
+        }
+      } else if (urlParams.get('test') === 'results') {
+        candidate = { name: 'Aditya Kumar', branch: 'CSE', section: 'B', fullSection: 'CSE-B' };
+        document.getElementById('active-candidate-tag').style.display = 'inline-flex';
+        document.getElementById('tag-name').innerText = 'ADITYA';
+        document.getElementById('tag-sec').innerText = 'CSE-B';
+
+        sessionLog.pre = [
+          {
+            id: 'pre-1', title: 'Google Pay UPI AutoPay E-Mandate Authorization', scenarioType: 'malicious', threatClass: 'Financial Security: AutoPay Mandate',
+            actionChosen: 'SET UP AUTOPAY', reasonChosen: 'A) The validation fee is ₹0.00, meaning zero immediate money leaves my bank account.', isSafe: false, isValidReason: false,
+            isCalibratedMastery: false, isLuckyGuess: false, isBreach: true, isFalseAlarm: false,
+            cognitiveState: 'HAZARDOUS_COMPROMISE', trapCategory: 'Small-Loss Blindness (Ignored the ₹15,000 monthly debit ceiling)', tier: 3, points: -6, latency: 4.2, confidentError: true, isCorrect: false
+          },
+          {
+            id: 'pre-2', title: 'BMSIT Examination & Feedback Portal Sign-In', scenarioType: 'benign', threatClass: 'Authentication: Google OAuth SSO',
+            actionChosen: 'ALLOW', reasonChosen: 'A) The OAuth scope is strictly limited to basic identity (openid, profile, email) without requesting sensitive Drive or file modification scopes.', isSafe: true, isValidReason: true,
+            isCalibratedMastery: true, isLuckyGuess: false, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'CALIBRATED_MASTERY', trapCategory: 'None', tier: 2, points: 2, latency: 6.1, confidentError: false, isCorrect: true
+          },
+          {
+            id: 'pre-3', title: 'Placement Cell Shortlist Advisory Attachment', scenarioType: 'malicious', threatClass: 'Attachment Security: LNK Binary',
+            actionChosen: 'REPORT AS JUNK / SPAM', reasonChosen: 'B) I prefer not to open attachments while in class.', isSafe: true, isValidReason: false,
+            isCalibratedMastery: false, isLuckyGuess: true, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'LUCKY_GUESS', trapCategory: 'Lucky Guess (Personal preference)', tier: 3, points: 0, latency: 5.3, confidentError: false, isCorrect: false
+          },
+          {
+            id: 'pre-4', title: 'Official Campus Recruitment Test Instructions', scenarioType: 'benign', threatClass: 'Email Verification: Department PDF',
+            actionChosen: 'DOWNLOAD ATTACHMENT', reasonChosen: 'A) Genuine institutional domain (@bmsit.in) with standard PDF file extension.', isSafe: true, isValidReason: true,
+            isCalibratedMastery: true, isLuckyGuess: false, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'CALIBRATED_MASTERY', trapCategory: 'None', tier: 3, points: 3, latency: 7.0, confidentError: false, isCorrect: true
+          },
+          {
+            id: 'pre-5', title: 'VTU Result & SGPA Calculator Extension', scenarioType: 'malicious', threatClass: 'Browser Extension: High-Privilege API',
+            actionChosen: 'ADD TO CHROME', reasonChosen: 'A) Wanted automated SGPA calculation convenience.', isSafe: false, isValidReason: false,
+            isCalibratedMastery: false, isLuckyGuess: false, isBreach: true, isFalseAlarm: false,
+            cognitiveState: 'HAZARDOUS_COMPROMISE', trapCategory: 'Scope Blindness (All-Site Data Harvest)', tier: 2, points: -2, latency: 3.9, confidentError: false, isCorrect: false
+          }
+        ];
+
+        sessionLog.post = [
+          {
+            id: 'post-1', title: 'PhonePe / GPay Order Refund Mandate', scenarioType: 'malicious', threatClass: 'Financial Security: Refund Mandate',
+            actionChosen: 'DECLINE', reasonChosen: 'A) Inbound refunds credit directly; setting up an AutoPay mandate authorizes outbound deductions.', isSafe: true, isValidReason: true,
+            isCalibratedMastery: true, isLuckyGuess: false, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'CALIBRATED_MASTERY', trapCategory: 'None', tier: 3, points: 3, latency: 3.2, confidentError: false, isCorrect: true
+          },
+          {
+            id: 'post-2', title: 'IEEE Student Branch Research Portal Access', scenarioType: 'benign', threatClass: 'Authentication: Google OAuth SSO',
+            actionChosen: 'ALLOW', reasonChosen: 'A) Standard identity verification without sensitive storage scopes.', isSafe: true, isValidReason: true,
+            isCalibratedMastery: true, isLuckyGuess: false, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'CALIBRATED_MASTERY', trapCategory: 'None', tier: 3, points: 3, latency: 4.1, confidentError: false, isCorrect: true
+          },
+          {
+            id: 'post-3', title: 'Shared Academic Archive Download', scenarioType: 'malicious', threatClass: 'Attachment Security: Double Extension',
+            actionChosen: 'REPORT AS JUNK / SPAM', reasonChosen: 'A) .pdf.exe double extension hides a Windows executable binary.', isSafe: true, isValidReason: true,
+            isCalibratedMastery: true, isLuckyGuess: false, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'CALIBRATED_MASTERY', trapCategory: 'None', tier: 3, points: 3, latency: 3.8, confidentError: false, isCorrect: true
+          },
+          {
+            id: 'post-4', title: 'Course Instructor Societal Project Template', scenarioType: 'benign', threatClass: 'Email Verification: Faculty Document',
+            actionChosen: 'DOWNLOAD ATTACHMENT', reasonChosen: 'A) Verified faculty email and standard clean .docx format.', isSafe: true, isValidReason: true,
+            isCalibratedMastery: true, isLuckyGuess: false, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'CALIBRATED_MASTERY', trapCategory: 'None', tier: 3, points: 3, latency: 3.5, confidentError: false, isCorrect: true
+          },
+          {
+            id: 'post-5', title: 'Campus Proxy & Lab Unblocker Extension', scenarioType: 'malicious', threatClass: 'Browser Extension: High-Privilege API',
+            actionChosen: 'CANCEL', reasonChosen: 'A) All-site data access creates Man-in-the-Middle risk.', isSafe: true, isValidReason: true,
+            isCalibratedMastery: true, isLuckyGuess: false, isBreach: false, isFalseAlarm: false,
+            cognitiveState: 'CALIBRATED_MASTERY', trapCategory: 'None', tier: 3, points: 3, latency: 4.0, confidentError: false, isCorrect: true
+          }
+        ];
+
+        switchView('results');
+        renderResults();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', checkTestHook);
+    } else {
+      checkTestHook();
+    }
+  </script>
+</body>
+</html>
